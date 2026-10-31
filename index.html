@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trip Expense Manager</title>
+  <style>
+    :root { --bg:#f4f6fb; --card:#fff; --ink:#172033; --muted:#697386; --line:#e7eaf1; --primary:#3758d6; --green:#16845b; --red:#c34444; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .wrap { max-width:1120px; margin:32px auto; padding:0 18px 40px; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:22px; }
+    h1 { margin:0; font-size:clamp(25px,4vw,34px); letter-spacing:-.7px; }
+    .sub { color:var(--muted); margin:5px 0 0; }
+    .status { font-size:13px; color:var(--muted); }
+    .grid { display:grid; grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr); gap:18px; align-items:start; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:0 5px 22px #18264a08; }
+    h2 { margin:0 0 15px; font-size:18px; }
+    label { display:block; font-size:13px; font-weight:650; margin:0 0 6px; }
+    input,select,button { font:inherit; }
+    input,select { width:100%; padding:11px 12px; border:1px solid #d9deea; border-radius:9px; background:#fff; color:var(--ink); outline:none; }
+    input:focus,select:focus { border-color:var(--primary); box-shadow:0 0 0 3px #3758d61a; }
+    .field { margin-bottom:13px; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    button { border:0; border-radius:9px; padding:11px 15px; cursor:pointer; font-weight:700; }
+    .primary { background:var(--primary); color:white; }
+    .secondary { background:#eef1fb; color:#2946b5; }
+    .danger { background:#fff0f0; color:var(--red); padding:7px 10px; font-size:12px; }
+    button:disabled { opacity:.55; cursor:wait; }
+    .actions { display:flex; gap:9px; flex-wrap:wrap; }
+    .people { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+    .person input { padding:9px 8px; font-size:13px; }
+    .hint { color:var(--muted); font-size:12px; margin:9px 0 0; }
+    .summary { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:15px; }
+    .stat { padding:13px; border-radius:11px; background:#f6f7fc; }
+    .stat small { color:var(--muted); display:block; }
+    .stat strong { font-size:20px; display:block; margin-top:3px; }
+    .balances { display:grid; gap:8px; }
+    .balance { display:flex; justify-content:space-between; gap:12px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; }
+    .positive { color:var(--green); font-weight:750; }
+    .negative { color:var(--red); font-weight:750; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:560px; }
+    th,td { text-align:left; padding:11px 9px; border-bottom:1px solid var(--line); font-size:13px; }
+    th { color:var(--muted); font-weight:700; }
+    td:last-child, th:last-child { text-align:right; }
+    .empty { color:var(--muted); text-align:center; padding:24px 8px; }
+    .wide { grid-column:1/-1; }
+    .top-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    @media(max-width:780px) { .grid { grid-template-columns:1fr; } header { align-items:flex-start; flex-direction:column; } .people { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Trip Expense Manager</h1>
+      <p class="sub">Track shared costs, see who owes whom, and keep everything in Google Sheets.</p>
+    </div>
+    <div class="top-actions">
+      <button class="secondary" id="refreshBtn" type="button">↻ Refresh from Sheet</button>
+      <span class="status" id="status" aria-live="polite">Not connected yet</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1. Trip members</h2>
+      <div class="people" id="peopleFields"></div>
+      <p class="hint">Edit the five names before adding expenses. Names are saved with each expense.</p>
+    </section>
+
+    <section class="card">
+      <h2>2. Add an expense</h2>
+      <form id="expenseForm">
+        <div class="field"><label for="description">Expense description</label><input id="description" required maxlength="100" placeholder="e.g. Hotel, fuel, dinner" /></div>
+        <div class="row">
+          <div class="field"><label for="amount">Amount (₹)</label><input id="amount" type="number" min="0.01" step="0.01" required placeholder="0.00" /></div>
+          <div class="field"><label for="date">Date</label><input id="date" type="date" required /></div>
+        </div>
+        <div class="field"><label for="paidBy">Paid by</label><select id="paidBy" required></select></div>
+        <div class="actions">
+          <button class="primary" id="saveBtn" type="submit">Save expense</button>
+          <button class="secondary" type="reset">Clear</button>
+        </div>
+        <p class="hint">Each expense is split equally among all five members. The payer is included in the split.</p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>3. Trip summary</h2>
+      <div class="summary">
+        <div class="stat"><small>Total expenses</small><strong id="totalAmount">₹0.00</strong></div>
+        <div class="stat"><small>Number of expenses</small><strong id="expenseCount">0</strong></div>
+      </div>
+      <div class="balances" id="balances"><div class="empty">Add expenses to calculate balances.</div></div>
+      <p class="hint">Positive means the member should receive money; negative means they need to pay.</p>
+    </section>
+
+    <section class="card">
+      <h2>4. Google Sheets connection</h2>
+      <div class="field"><label for="apiUrl">Apps Script Web App URL</label><input id="apiUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+      <div class="actions">
+        <button class="secondary" id="connectBtn" type="button">Connect & load data</button>
+      </div>
+      <p class="hint">Paste the deployed Apps Script Web App URL. It is kept in this browser only.</p>
+    </section>
+
+    <section class="card wide">
+      <h2>5. Expense history</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Paid by</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="expenseRows"><tr><td colspan="5" class="empty">No expenses loaded.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  const DEFAULT_NAMES = ["Person 1", "Person 2", "Person 3", "Person 4", "Person 5"];
+  let people = [...DEFAULT_NAMES];
+  let expenses = [];
+  let apiUrl = localStorage.getItem("tripExpenseApiUrl") || "";
+
+  const $ = id => document.getElementById(id);
+  const money = n => "₹" + Number(n || 0).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  function setStatus(message, isError=false) {
+    $("status").textContent = message;
+    $("status").style.color = isError ? "#c34444" : "#697386";
+  }
+  function renderPeople() {
+    $("peopleFields").innerHTML = people.map((name,i) =>
+      `<div class="person"><label for="person${i}">Member ${i+1}</label><input id="person${i}" maxlength="40" value="${esc(name)}" /></div>`
+    ).join("");
+    people.forEach((_,i) => $(`person${i}`).addEventListener("change", () => {
+      const old = people[i]; people[i] = $(`person${i}`).value.trim() || DEFAULT_NAMES[i];
+      renderPeople(); renderPaidBy();
+      // Existing records retain the member names saved when the expense was entered.
+      setStatus(`Member ${i+1} updated. New expenses will use "${people[i]}".`);
+    }));
+    renderPaidBy();
+  }
+  function renderPaidBy() {
+    const current = $("paidBy").value;
+    $("paidBy").innerHTML = people.map((p,i)=>`<option value="${i}">${esc(p)}</option>`).join("");
+    if (current !== "") $("paidBy").value = current;
+  }
+  function calcBalances() {
+    const totals = {};
+    people.forEach(p => totals[p] = 0);
+    let total = 0;
+    expenses.forEach(e => {
+      const amount = Number(e.amount) || 0, names = Array.isArray(e.people) && e.people.length ? e.people : people;
+      const payer = e.paidBy || people[Number(e.paidByIndex) || 0];
+      names.forEach(n => { if (!(n in totals)) totals[n] = 0; });
+      if (!(payer in totals)) totals[payer] = 0;
+      const share = amount / names.length;
+      names.forEach(n => totals[n] -= share);
+      totals[payer] += amount;
+      total += amount;
+    });
+    return {totals,total};
+  }
+  function render() {
+    const {totals,total} = calcBalances();
+    $("totalAmount").textContent = money(total);
+    $("expenseCount").textContent = expenses.length;
+    $("balances").innerHTML = Object.entries(totals).map(([name,value]) =>
+      `<div class="balance"><span>${esc(name)}</span><strong class="${value >= 0 ? "positive":"negative"}">${value >= 0 ? "+":""}${money(value)}</strong></div>`
+    ).join("") || '<div class="empty">No members yet.</div>';
+    $("expenseRows").innerHTML = expenses.length ? [...expenses].reverse().map((e,idx) => {
+      const realIndex = expenses.length - 1 - idx;
+      return `<tr><td>${esc(e.date || "")}</td><td>${esc(e.description || "")}</td><td>${esc(e.paidBy || "")}</td><td>${money(e.amount)}</td><td><button class="danger" onclick="deleteExpense('${esc(e.id)}')">Delete</button></td></tr>`;
+    }).join("") : '<tr><td colspan="5" class="empty">No expenses yet. Add your first expense above.</td></tr>';
+  }
+  async function api(action, payload={}) {
+    const url = $("apiUrl").value.trim();
+    if (!url) throw new Error("Add your Apps Script Web App URL first.");
+    const response = await fetch(url, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action,...payload})
+    });
+    if (!response.ok) throw new Error(`Server returned ${response.status}`);
+    const data = await response.json();
+    if (!data.ok) throw new Error(data.error || "Google Sheets request failed.");
+    return data;
+  }
+  async function loadExpenses() {
+    try {
+      $("refreshBtn").disabled = true; $("connectBtn").disabled = true;
+      setStatus("Loading from Google Sheets…");
+      const data = await api("list");
+      expenses = data.expenses || [];
+      if (data.people && data.people.length === 5) { people = data.people; renderPeople(); }
+      render(); setStatus(`Synced · ${expenses.length} expense(s) loaded`);
+    } catch (err) { setStatus(err.message, true); }
+    finally { $("refreshBtn").disabled = false; $("connectBtn").disabled = false; }
+  }
+  async function deleteExpense(id) {
+    if (!confirm("Delete this expense from the Google Sheet?")) return;
+    try {
+      await api("delete", {id});
+      expenses = expenses.filter(e => String(e.id) !== String(id));
+      render(); setStatus("Expense deleted from Google Sheets.");
+    } catch(err) { setStatus(err.message, true); }
+  }
+  window.deleteExpense = deleteExpense;
+
+  $("expenseForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const amount = Number($("amount").value);
+    if (!Number.isFinite(amount) || amount <= 0) return setStatus("Enter a valid amount.", true);
+    const expense = {
+      id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()),
+      date:$("date").value,
+      description:$("description").value.trim(),
+      amount,
+      paidBy:people[Number($("paidBy").value)],
+      people:[...people]
+    };
+    try {
+      $("saveBtn").disabled = true; setStatus("Saving to Google Sheets…");
+      const data = await api("add", {expense, people});
+      expenses = data.expenses || [...expenses, expense];
+      render(); $("expenseForm").reset();
+      $("date").value = new Date().toISOString().slice(0,10);
+      renderPaidBy(); setStatus("Expense saved to Google Sheets.");
+    } catch(err) { setStatus(err.message, true); }
+    finally { $("saveBtn").disabled = false; }
+  });
+  $("connectBtn").addEventListener("click", () => {
+    apiUrl = $("apiUrl").value.trim(); localStorage.setItem("tripExpenseApiUrl", apiUrl); loadExpenses();
+  });
+  $("refreshBtn").addEventListener("click", loadExpenses);
+  $("apiUrl").value = apiUrl;
+  $("date").value = new Date().toISOString().slice(0,10);
+  renderPeople(); render();
+  if (apiUrl) loadExpenses();
+</script>
+</body>
+</html>
