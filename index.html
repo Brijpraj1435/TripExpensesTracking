@@ -112,7 +112,7 @@
   const DEFAULT_NAMES = ["Person 1", "Person 2", "Person 3", "Person 4", "Person 5"];
   let people = [...DEFAULT_NAMES];
   let expenses = [];
-  let apiUrl =  localStorage.getItem("tripExpenseApiUrl") || "";
+
   const API_URL = "https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
   const $ = id => document.getElementById(id);
   const money = n => "₹" + Number(n || 0).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -225,7 +225,6 @@
   });
   
   $("refreshBtn").addEventListener("click", loadExpenses);
-  $("apiUrl").value = apiUrl;
   $("date").value = new Date().toISOString().slice(0,10);
   renderPeople(); render();
   
