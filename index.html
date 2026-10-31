@@ -3,21 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Trip Expense Manager</title>
 
 <style>
 :root{
-  --primary:#4f46e5;
-  --primary-dark:#3730a3;
-  --bg:#f5f7fb;
-  --card:#ffffff;
-  --ink:#1f2937;
-  --muted:#6b7280;
-  --line:#e5e7eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --orange:#ea580c;
+  --bg:#f4f6fb;
+  --card:#fff;
+  --ink:#172033;
+  --muted:#697386;
+  --line:#e7eaf1;
+  --primary:#3758d6;
+  --green:#16845b;
+  --red:#c34444;
 }
 
 *{
@@ -26,21 +23,55 @@
 
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
   background:var(--bg);
   color:var(--ink);
+  font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 }
 
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
+.wrap{
+  max-width:1120px;
+  margin:32px auto;
+  padding:0 18px 40px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:22px;
 }
 
 h1{
-  text-align:center;
-  margin:5px 0 20px;
-  color:var(--primary);
+  margin:0;
+  font-size:clamp(25px,4vw,34px);
+}
+
+h2{
+  margin:0 0 15px;
+  font-size:18px;
+}
+
+h3{
+  margin:18px 0 10px;
+  font-size:15px;
+}
+
+.sub{
+  color:var(--muted);
+  margin:5px 0 0;
+}
+
+.status{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+  align-items:start;
 }
 
 .card{
@@ -48,64 +79,45 @@ h1{
   border:1px solid var(--line);
   border-radius:16px;
   padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 4px 15px rgba(0,0,0,.05);
+  box-shadow:0 5px 22px #18264a08;
 }
 
-.card h2{
-  margin-top:0;
-  font-size:20px;
+.wide{
+  grid-column:1/-1;
 }
 
 label{
   display:block;
-  margin-top:12px;
+  font-size:13px;
+  font-weight:650;
   margin-bottom:6px;
-  font-weight:600;
 }
 
 input,
 select,
 button{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  font-size:15px;
+  font:inherit;
 }
 
 input,
 select{
-  border:1px solid var(--line);
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #d9deea;
+  border-radius:9px;
   background:#fff;
+  color:var(--ink);
+  outline:none;
 }
 
-button{
-  border:0;
-  background:var(--primary);
-  color:#fff;
-  cursor:pointer;
-  font-weight:600;
+input:focus,
+select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px #3758d61a;
 }
 
-button:hover{
-  background:var(--primary-dark);
-}
-
-button.secondary{
-  background:#e5e7eb;
-  color:#111827;
-}
-
-button.danger{
-  background:var(--red);
-}
-
-button.green{
-  background:var(--green);
-}
-
-button.orange{
-  background:var(--orange);
+.field{
+  margin-bottom:13px;
 }
 
 .row{
@@ -114,14 +126,52 @@ button.orange{
   gap:12px;
 }
 
-@media(max-width:600px){
-  .row{
-    grid-template-columns:1fr;
-  }
+button{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  cursor:pointer;
+  font-weight:700;
+}
 
-  .container{
-    padding:12px;
-  }
+button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+
+.primary{
+  background:var(--primary);
+  color:#fff;
+}
+
+.secondary{
+  background:#eef1fb;
+  color:#2946b5;
+}
+
+.success{
+  background:#e9f8f1;
+  color:#08744c;
+}
+
+.danger{
+  background:#fff0f0;
+  color:var(--red);
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.actions,
+.top-actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+
+.hint{
+  color:var(--muted);
+  font-size:12px;
+  margin:9px 0 0;
 }
 
 /* =========================
@@ -131,18 +181,25 @@ button.orange{
 .tabs{
   display:flex;
   gap:8px;
-  margin-bottom:20px;
+  margin-bottom:18px;
+  background:#fff;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:13px;
 }
 
 .tab-button{
   flex:1;
-  background:#e5e7eb;
-  color:#374151;
+  background:transparent;
+  color:var(--muted);
+  padding:13px 12px;
+  border-radius:9px;
+  font-weight:750;
 }
 
 .tab-button.active{
   background:var(--primary);
-  color:white;
+  color:#fff;
 }
 
 .tab-content{
@@ -157,124 +214,127 @@ button.orange{
    SUMMARY
 ========================= */
 
-.summary-grid{
+.summary{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-}
-
-.summary-box{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:15px;
-  background:#fafafa;
-}
-
-.summary-box .title{
-  color:var(--muted);
-  font-size:13px;
-}
-
-.summary-box .value{
-  font-size:22px;
-  font-weight:700;
-  margin-top:5px;
-}
-
-.balance-positive{
-  color:var(--green);
-}
-
-.balance-negative{
-  color:var(--red);
-}
-
-/* =========================
-   PEOPLE / HISTORY
-========================= */
-
-.person-row,
-.history-row,
-.settlement-row{
-  border-bottom:1px solid var(--line);
-  padding:12px 0;
-}
-
-.person-row:last-child,
-.history-row:last-child,
-.settlement-row:last-child{
-  border-bottom:0;
-}
-
-.person-name{
-  font-weight:700;
-}
-
-.small{
-  font-size:13px;
-  color:var(--muted);
-}
-
-.amount{
-  font-weight:700;
-}
-
-.history-header{
-  display:flex;
-  justify-content:space-between;
+  grid-template-columns:repeat(4,1fr);
   gap:10px;
-  align-items:center;
+  margin-bottom:15px;
 }
 
-.delete-btn{
-  width:auto;
-  padding:7px 12px;
-  font-size:12px;
-  background:var(--red);
+.stat{
+  padding:13px;
+  border-radius:11px;
+  background:#f6f7fc;
 }
 
-.settlement-row{
-  cursor:pointer;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:12px;
-  margin-bottom:8px;
-  background:#fafafa;
-}
-
-.settlement-row:hover{
-  background:#eef2ff;
-}
-
-.settlement-arrow{
-  color:var(--primary);
-  font-weight:700;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status{
-  margin-top:12px;
-  padding:10px;
-  border-radius:8px;
-  display:none;
-  font-size:14px;
-}
-
-.status.show{
+.stat small{
+  color:var(--muted);
   display:block;
 }
 
-.status.success{
-  background:#dcfce7;
-  color:#166534;
+.stat strong{
+  font-size:20px;
+  display:block;
+  margin-top:3px;
 }
 
-.status.error{
-  background:#fee2e2;
-  color:#991b1b;
+.balances{
+  display:grid;
+  gap:8px;
+}
+
+.balance{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+
+.positive{
+  color:var(--green);
+  font-weight:750;
+}
+
+.negative{
+  color:var(--red);
+  font-weight:750;
+}
+
+/* =========================
+   SETTLEMENT
+========================= */
+
+.settlement{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.settlement:hover{
+  background:#f7f8ff;
+  border-color:#bfc8ef;
+}
+
+.settlement-main{
+  font-weight:700;
+}
+
+.settlement-sub{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.settlement-action{
+  color:var(--primary);
+  font-size:12px;
+  font-weight:700;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:11px 9px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+
+th{
+  color:var(--muted);
+  font-weight:700;
+}
+
+td:last-child,
+th:last-child{
+  text-align:right;
+}
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:24px 8px;
 }
 
 /* =========================
@@ -284,12 +344,12 @@ button.orange{
 .loader-overlay{
   position:fixed;
   inset:0;
-  background:rgba(255,255,255,.78);
+  background:rgba(244,246,251,.78);
   backdrop-filter:blur(3px);
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:9999;
+  z-index:99999;
 }
 
 .loader-overlay.show{
@@ -297,34 +357,77 @@ button.orange{
 }
 
 .loader-box{
+  width:min(90%,280px);
   background:#fff;
   border:1px solid var(--line);
   border-radius:16px;
-  padding:24px 30px;
-  min-width:210px;
+  padding:24px 25px;
   text-align:center;
-  box-shadow:0 10px 40px rgba(0,0,0,.15);
+  box-shadow:0 12px 40px rgba(24,38,74,.18);
 }
 
 .spinner{
   width:42px;
   height:42px;
   margin:0 auto 14px;
-  border:4px solid #e5e7eb;
+  border:4px solid #e5e9f2;
   border-top:4px solid var(--primary);
   border-radius:50%;
   animation:spin .8s linear infinite;
 }
 
-#loaderText{
-  font-size:14px;
-  font-weight:650;
+.loader-text{
   color:var(--ink);
+  font-size:14px;
+  font-weight:700;
 }
 
 @keyframes spin{
   to{
     transform:rotate(360deg);
+  }
+}
+
+@media(max-width:780px){
+
+  .summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  .tabs{
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+}
+
+@media(max-width:450px){
+
+  .wrap{
+    margin:18px auto;
+    padding:0 12px 30px;
+  }
+
+  .card{
+    padding:16px;
+  }
+
+  .summary{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .tab-button{
+    font-size:13px;
+    padding:11px 6px;
   }
 }
 </style>
@@ -336,1678 +439,1842 @@ button.orange{
      LOADER
 ========================= -->
 
-<div id="loader" class="loader-overlay">
+<div
+  id="loader"
+  class="loader-overlay"
+  aria-hidden="true">
+
   <div class="loader-box">
+
     <div class="spinner"></div>
-    <div id="loaderText">Please wait...</div>
+
+    <div
+      id="loaderText"
+      class="loader-text">
+      Please wait...
+    </div>
+
   </div>
+
 </div>
 
 
-<div class="container">
+<div class="wrap">
 
-  <h1>💰 Trip Expense Manager</h1>
+<header>
 
+<div>
 
-  <!-- =========================
-       TABS
-  ========================= -->
+<h1>Trip Expense Manager</h1>
 
-  <div class="tabs">
+<p class="sub">
+Track expenses, payments and automatically calculate who owes whom.
+</p>
 
-    <button
-      class="tab-button active"
-      id="expenseTabBtn"
-      type="button"
-      onclick="openTab('expenseTab')">
-      💰 Add Expense
-    </button>
+</div>
 
-    <button
-      class="tab-button"
-      id="paymentTabBtn"
-      type="button"
-      onclick="openTab('paymentTab')">
-      💸 Record Payment
-    </button>
+<div class="top-actions">
 
-  </div>
+<button
+class="secondary"
+id="refreshBtn"
+type="button">
 
+↻ Refresh
 
-  <!-- =========================
-       ADD EXPENSE TAB
-  ========================= -->
+</button>
 
-  <div id="expenseTab" class="tab-content active">
+<span
+class="status"
+id="status">
 
-    <div class="card">
+Not connected yet
 
-      <h2>💰 Add Expense</h2>
+</span>
 
-      <form id="expenseForm">
+</div>
 
-        <label>Description</label>
-        <input
-          type="text"
-          id="description"
-          placeholder="Example: Hotel, Food, Petrol"
-          required
-        >
+</header>
 
-        <div class="row">
 
-          <div>
-            <label>Amount</label>
-            <input
-              type="number"
-              id="amount"
-              min="0"
-              step="0.01"
-              placeholder="₹0"
-              required
-            >
-          </div>
+<div class="grid">
 
-          <div>
-            <label>Date</label>
-            <input
-              type="date"
-              id="expenseDate"
-              required
-            >
-          </div>
 
-        </div>
+<!-- =========================
+     SUMMARY
+========================= -->
 
-        <label>Paid By</label>
-        <select id="paidBy" required>
-          <option value="">Select person</option>
-        </select>
+<section class="card">
 
-        <br><br>
+<h2>Trip Summary</h2>
 
-        <div class="row">
+<div class="summary">
 
-          <button type="submit">
-            💾 Save Expense
-          </button>
+<div class="stat">
 
-          <button
-            type="button"
-            class="secondary"
-            onclick="clearExpenseForm()">
-            Clear
-          </button>
+<small>Total Expenses</small>
 
-        </div>
+<strong id="totalAmount">
+₹0.00
+</strong>
 
-        <div id="expenseStatus" class="status"></div>
+</div>
 
-      </form>
+<div class="stat">
 
-    </div>
+<small>Total Payments</small>
 
-  </div>
+<strong id="totalPayments">
+₹0.00
+</strong>
 
+</div>
 
-  <!-- =========================
-       PAYMENT TAB
-  ========================= -->
+<div class="stat">
 
-  <div id="paymentTab" class="tab-content">
+<small>Expenses</small>
 
-    <div class="card">
+<strong id="expenseCount">
+0
+</strong>
 
-      <h2>💸 Record Payment</h2>
+</div>
 
-      <form id="paymentForm">
+<div class="stat">
 
-        <label>Date</label>
+<small>Payments</small>
 
-        <input
-          type="date"
-          id="paymentDate"
-          required
-        >
+<strong id="paymentCount">
+0
+</strong>
 
+</div>
 
-        <div class="row">
+</div>
 
-          <div>
 
-            <label>From</label>
+<h3>Current Balance</h3>
 
-            <select id="paymentFrom" required>
-              <option value="">Select person</option>
-            </select>
+<div
+class="balances"
+id="balances">
 
-          </div>
+<div class="empty">
+Loading...
+</div>
 
+</div>
 
-          <div>
+<p class="hint">
+Positive = should receive money.
+Negative = needs to pay.
+</p>
 
-            <label>To</label>
+</section>
 
-            <select id="paymentTo" required>
-              <option value="">Select person</option>
-            </select>
 
-          </div>
+<!-- =========================
+     TABS
+========================= -->
 
-        </div>
+<section class="card">
 
+<div class="tabs">
 
-        <label>Payment Amount</label>
+<button
+class="tab-button active"
+id="expenseTabBtn"
+type="button"
+onclick="openTab('expenseTab')">
 
-        <input
-          type="number"
-          id="paymentAmount"
-          min="0"
-          step="0.01"
-          placeholder="₹0"
-          required
-        >
+💰 Add Expense
 
+</button>
 
-        <br>
 
-        <button
-          type="submit"
-          class="green">
-          💸 Record Payment
-        </button>
+<button
+class="tab-button"
+id="paymentTabBtn"
+type="button"
+onclick="openTab('paymentTab')">
 
+💸 Record Payment
 
-        <div id="paymentStatus" class="status"></div>
+</button>
 
-      </form>
+</div>
 
-    </div>
 
-  </div>
+<!-- =========================
+     EXPENSE TAB
+========================= -->
 
+<div
+id="expenseTab"
+class="tab-content active">
 
-  <!-- =========================
-       SUMMARY
-  ========================= -->
+<h2>Add Expense</h2>
 
-  <div class="card">
+<form id="expenseForm">
 
-    <h2>📊 Trip Summary</h2>
 
-    <div class="summary-grid">
+<div class="field">
 
-      <div class="summary-box">
+<label>
+Expense Description
+</label>
 
-        <div class="title">
-          Total Expenses
-        </div>
+<input
+id="description"
+required
+maxlength="100"
+placeholder="Hotel, fuel, dinner...">
 
-        <div
-          class="value"
-          id="totalExpenses">
-          ₹0
-        </div>
+</div>
 
-      </div>
 
+<div class="row">
 
-      <div class="summary-box">
+<div class="field">
 
-        <div class="title">
-          Total Payments
-        </div>
+<label>
+Amount (₹)
+</label>
 
-        <div
-          class="value"
-          id="totalPayments">
-          ₹0
-        </div>
+<input
+id="amount"
+type="number"
+min="0.01"
+step="0.01"
+required
+placeholder="5000">
 
-      </div>
+</div>
 
-    </div>
 
+<div class="field">
 
-    <br>
+<label>
+Date
+</label>
 
-    <div id="balances"></div>
+<input
+id="date"
+type="date"
+required>
 
-  </div>
+</div>
 
+</div>
 
-  <!-- =========================
-       SUGGESTED SETTLEMENT
-  ========================= -->
 
-  <div class="card">
+<div class="field">
 
-    <h2>🤝 Suggested Settlement</h2>
+<label>
+Paid By
+</label>
 
-    <div class="small">
-      Tap a settlement to record the payment.
-    </div>
+<select
+id="paidBy"
+required>
+</select>
 
-    <br>
+</div>
 
-    <div id="settlementList">
-      No settlement required.
-    </div>
 
-  </div>
+<div class="actions">
 
+<button
+class="primary"
+id="saveBtn"
+type="submit">
 
-  <!-- =========================
-       EXPENSE HISTORY
-  ========================= -->
+Save Expense
 
-  <div class="card">
+</button>
 
-    <h2>📋 Expense History</h2>
 
-    <div id="expenseHistory">
-      No expenses found.
-    </div>
+<button
+class="secondary"
+id="clearExpenseBtn"
+type="reset">
 
-  </div>
+Clear
 
+</button>
 
-  <!-- =========================
-       PAYMENT HISTORY
-  ========================= -->
+</div>
 
-  <div class="card">
 
-    <h2>💳 Payment History</h2>
+<p class="hint">
+Expense is divided equally between all five people.
+</p>
 
-    <div id="paymentHistory">
-      No payments found.
-    </div>
+</form>
 
-  </div>
+</div>
+
+
+<!-- =========================
+     PAYMENT TAB
+========================= -->
+
+<div
+id="paymentTab"
+class="tab-content">
+
+<h2>Record Payment</h2>
+
+<form id="paymentForm">
+
+
+<div class="field">
+
+<label>
+Payment Date
+</label>
+
+<input
+id="paymentDate"
+type="date"
+required>
+
+</div>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>
+From
+</label>
+
+<select
+id="paymentFrom"
+required>
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+To
+</label>
+
+<select
+id="paymentTo"
+required>
+</select>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Payment Amount (₹)
+</label>
+
+<input
+id="paymentAmount"
+type="number"
+min="0.01"
+step="0.01"
+required
+placeholder="1000">
+
+</div>
+
+
+<button
+class="success"
+id="paymentBtn"
+type="submit">
+
+Record Payment
+
+</button>
+
+
+<p class="hint">
+Example: Person 2 sends ₹1,000 to Person 1.
+</p>
+
+</form>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     SETTLEMENT
+========================= -->
+
+<section class="card wide">
+
+<h2>Suggested Settlement</h2>
+
+<div id="settlements">
+
+<div class="empty">
+Add expenses to see who should pay whom.
+</div>
+
+</div>
+
+<p class="hint">
+Tap a settlement to automatically fill the payment form.
+</p>
+
+</section>
+
+
+<!-- =========================
+     EXPENSE HISTORY
+========================= -->
+
+<section class="card wide">
+
+<h2>Expense History</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+<th>Description</th>
+<th>Paid By</th>
+<th>Amount</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="expenseRows">
+
+<tr>
+
+<td
+colspan="5"
+class="empty">
+
+No expenses.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     PAYMENT HISTORY
+========================= -->
+
+<section class="card wide">
+
+<h2>Payment History</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+<th>From</th>
+<th>To</th>
+<th>Amount</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="paymentRows">
+
+<tr>
+
+<td
+colspan="5"
+class="empty">
+
+No payments.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</div>
+
+
+<footer
+style="text-align:center;padding:20px;color:#697386;font-size:13px">
+
+<div>
+Developed by <strong>Brijesh Prajapati</strong>
+</div>
+
+<div>
+© 2026 Brijesh Prajapati. All Rights Reserved.
+</div>
+
+</footer>
 
 </div>
 
 
 <script>
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+const DEFAULT_NAMES = [
+"Person 1",
+"Person 2",
+"Person 3",
+"Person 4",
+"Person 5"
+];
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
-
-
-/* =========================================================
-   GLOBAL DATA
-========================================================= */
-
-let people = [];
+let people = [...DEFAULT_NAMES];
 
 let expenses = [];
 
 let payments = [];
 
 
-/* =========================================================
-   HELPER
-========================================================= */
+/* =========================
+   APPS SCRIPT URL
+========================= */
 
-function $(id){
-  return document.getElementById(id);
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
+
+
+const $ = id =>
+document.getElementById(id);
+
+
+const money = n =>
+"₹" +
+Number(n || 0).toLocaleString(
+"en-IN",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
 }
+);
 
 
-/* =========================================================
+const esc = s =>
+String(s ?? "").replace(
+/[&<>"']/g,
+c =>
+({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+);
+
+
+/* =========================
    LOADER
-========================================================= */
+========================= */
 
-function showLoader(message = "Please wait..."){
+function showLoader(
+message = "Please wait..."
+){
 
-  $("loaderText").textContent = message;
+$("loaderText").textContent =
+message;
 
-  $("loader").classList.add("show");
+$("loader").classList.add("show");
+
+$("loader").setAttribute(
+"aria-hidden",
+"false"
+);
 
 }
 
 
 function hideLoader(){
 
-  $("loader").classList.remove("show");
+$("loader").classList.remove("show");
+
+$("loader").setAttribute(
+"aria-hidden",
+"true"
+);
 
 }
 
 
-/* =========================================================
-   STATUS MESSAGE
-========================================================= */
+/* =========================
+   STATUS
+========================= */
 
-function showStatus(elementId,message,type){
+function setStatus(
+message,
+isError=false
+){
 
-  const el = $(elementId);
+$("status").textContent =
+message;
 
-  el.textContent = message;
-
-  el.className = "status show " + type;
-
-}
-
-
-function hideStatus(elementId){
-
-  const el = $(elementId);
-
-  el.className = "status";
-
-  el.textContent = "";
+$("status").style.color =
+isError
+? "#c34444"
+: "#697386";
 
 }
 
 
-/* =========================================================
-   TAB CONTROL
-========================================================= */
+/* =========================
+   TABS
+========================= */
 
 function openTab(tabId){
 
-  document.querySelectorAll(".tab-content")
-    .forEach(tab => tab.classList.remove("active"));
+document
+.querySelectorAll(".tab-content")
+.forEach(tab => {
 
-  document.querySelectorAll(".tab-button")
-    .forEach(btn => btn.classList.remove("active"));
-
-
-  $(tabId).classList.add("active");
-
-
-  if(tabId === "expenseTab"){
-
-    $("expenseTabBtn").classList.add("active");
-
-  }
-
-  if(tabId === "paymentTab"){
-
-    $("paymentTabBtn").classList.add("active");
-
-  }
-
-}
-
-
-/* =========================================================
-   DATE
-========================================================= */
-
-function today(){
-
-  const d = new Date();
-
-  const month =
-    String(d.getMonth()+1).padStart(2,"0");
-
-  const day =
-    String(d.getDate()).padStart(2,"0");
-
-  return `${d.getFullYear()}-${month}-${day}`;
-
-}
-
-
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
-
-window.addEventListener("load",function(){
-
-  $("expenseDate").value = today();
-
-  $("paymentDate").value = today();
-
-  loadData();
+tab.classList.remove("active");
 
 });
 
 
-/* =========================================================
-   LOAD DATA
-========================================================= */
+document
+.querySelectorAll(".tab-button")
+.forEach(button => {
 
-async function loadData(){
+button.classList.remove("active");
 
-  showLoader("Loading trip data...");
-
-
-  try{
-
-    const response =
-      await fetch(API_URL + "?action=list");
-
-    const data =
-      await response.json();
+});
 
 
-    if(data.people && data.people.length === 5){
-
-      people = data.people;
-
-    }
+$(tabId)
+.classList.add("active");
 
 
-    expenses =
-      Array.isArray(data.expenses)
-      ? data.expenses
-      : [];
+if(tabId === "expenseTab"){
 
+$("expenseTabBtn")
+.classList.add("active");
 
-    payments =
-      Array.isArray(data.payments)
-      ? data.payments
-      : [];
+}
+else{
 
+$("paymentTabBtn")
+.classList.add("active");
 
-    renderPaidBy();
-
-    renderPaymentPeople();
-
-    renderAll();
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Unable to load trip data. Please check your internet connection."
-    );
-
-
-  }finally{
-
-    hideLoader();
-
-  }
+}
 
 }
 
 
-/* =========================================================
-   RENDER PEOPLE
-========================================================= */
+/* =========================
+   DROPDOWNS
+========================= */
 
 function renderPaidBy(){
 
-  const select = $("paidBy");
-
-  select.innerHTML =
-    '<option value="">Select person</option>';
-
-
-  people.forEach(person => {
-
-    const option =
-      document.createElement("option");
-
-    option.value = person;
-
-    option.textContent = person;
-
-    select.appendChild(option);
-
-  });
+$("paidBy").innerHTML =
+people.map(
+(p,i) =>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
 
 }
 
-
-/* =========================================================
-   PAYMENT PEOPLE
-========================================================= */
 
 function renderPaymentPeople(){
 
-  const from =
-    $("paymentFrom");
-
-  const to =
-    $("paymentTo");
-
-
-  from.innerHTML =
-    '<option value="">Select person</option>';
-
-  to.innerHTML =
-    '<option value="">Select person</option>';
+$("paymentFrom").innerHTML =
+people.map(
+(p,i) =>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
 
 
-  people.forEach(person => {
-
-    const option1 =
-      document.createElement("option");
-
-    option1.value = person;
-
-    option1.textContent = person;
-
-    from.appendChild(option1);
+$("paymentTo").innerHTML =
+people.map(
+(p,i) =>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
 
 
-    const option2 =
-      document.createElement("option");
+if(people.length > 1){
 
-    option2.value = person;
+$("paymentTo").value = "1";
 
-    option2.textContent = person;
-
-    to.appendChild(option2);
-
-  });
+}
 
 }
 
 
-/* =========================================================
-   ADD EXPENSE
-========================================================= */
-
-$("expenseForm").addEventListener(
-  "submit",
-  async function(event){
-
-    event.preventDefault();
-
-
-    const description =
-      $("description").value.trim();
-
-    const amount =
-      Number($("amount").value);
-
-    const date =
-      $("expenseDate").value;
-
-    const paidBy =
-      $("paidBy").value;
-
-
-    if(!description || !amount || !date || !paidBy){
-
-      showStatus(
-        "expenseStatus",
-        "Please fill all fields.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    showLoader("Saving expense...");
-
-    hideStatus("expenseStatus");
-
-
-    try{
-
-      const expense = {
-
-        id:
-          "EXP-" + Date.now(),
-
-        date:
-          date,
-
-        description:
-          description,
-
-        amount:
-          amount,
-
-        paidBy:
-          paidBy
-
-      };
-
-
-      const response =
-        await fetch(API_URL,{
-
-          method:"POST",
-
-          body:JSON.stringify({
-
-            action:"add",
-
-            expense:expense,
-
-            people:people
-
-          })
-
-        });
-
-
-      const result =
-        await response.json();
-
-
-      if(!result.success){
-
-        throw new Error(
-          result.message ||
-          "Unable to save expense."
-        );
-
-      }
-
-
-      showStatus(
-        "expenseStatus",
-        "Expense saved successfully.",
-        "success"
-      );
-
-
-      clearExpenseForm();
-
-      await loadData();
-
-
-    }catch(error){
-
-      console.error(error);
-
-      showStatus(
-        "expenseStatus",
-        error.message ||
-        "Unable to save expense.",
-        "error"
-      );
-
-
-    }finally{
-
-      hideLoader();
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   CLEAR EXPENSE FORM
-========================================================= */
-
-function clearExpenseForm(){
-
-  $("description").value = "";
-
-  $("amount").value = "";
-
-  $("paidBy").value = "";
-
-  $("expenseDate").value = today();
-
-}
-
-
-/* =========================================================
-   ADD PAYMENT
-========================================================= */
-
-$("paymentForm").addEventListener(
-  "submit",
-  async function(event){
-
-    event.preventDefault();
-
-
-    const date =
-      $("paymentDate").value;
-
-    const from =
-      $("paymentFrom").value;
-
-    const to =
-      $("paymentTo").value;
-
-    const amount =
-      Number($("paymentAmount").value);
-
-
-    if(!date || !from || !to || !amount){
-
-      showStatus(
-        "paymentStatus",
-        "Please fill all fields.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if(from === to){
-
-      showStatus(
-        "paymentStatus",
-        "From and To person cannot be the same.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    showLoader("Recording payment...");
-
-    hideStatus("paymentStatus");
-
-
-    try{
-
-      const payment = {
-
-        id:
-          "PAY-" + Date.now(),
-
-        date:
-          date,
-
-        from:
-          from,
-
-        to:
-          to,
-
-        amount:
-          amount
-
-      };
-
-
-      const response =
-        await fetch(API_URL,{
-
-          method:"POST",
-
-          body:JSON.stringify({
-
-            action:"addPayment",
-
-            payment:payment
-
-          })
-
-        });
-
-
-      const result =
-        await response.json();
-
-
-      if(!result.success){
-
-        throw new Error(
-          result.message ||
-          "Unable to record payment."
-        );
-
-      }
-
-
-      showStatus(
-        "paymentStatus",
-        "Payment recorded successfully.",
-        "success"
-      );
-
-
-      $("paymentAmount").value = "";
-
-
-      await loadData();
-
-
-    }catch(error){
-
-      console.error(error);
-
-      showStatus(
-        "paymentStatus",
-        error.message ||
-        "Unable to record payment.",
-        "error"
-      );
-
-
-    }finally{
-
-      hideLoader();
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   DELETE EXPENSE
-========================================================= */
-
-async function deleteExpense(id){
-
-  if(!confirm(
-    "Are you sure you want to delete this expense?"
-  )){
-
-    return;
-
-  }
-
-
-  showLoader("Deleting expense...");
-
-
-  try{
-
-    const response =
-      await fetch(API_URL,{
-
-        method:"POST",
-
-        body:JSON.stringify({
-
-          action:"delete",
-
-          id:id
-
-        })
-
-      });
-
-
-    const result =
-      await response.json();
-
-
-    if(!result.success){
-
-      throw new Error(
-        result.message ||
-        "Unable to delete expense."
-      );
-
-    }
-
-
-    await loadData();
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "Unable to delete expense."
-    );
-
-
-  }finally{
-
-    hideLoader();
-
-  }
-
-}
-
-
-/* =========================================================
-   DELETE PAYMENT
-========================================================= */
-
-async function deletePayment(id){
-
-  if(!confirm(
-    "Are you sure you want to delete this payment?"
-  )){
-
-    return;
-
-  }
-
-
-  showLoader("Deleting payment...");
-
-
-  try{
-
-    const response =
-      await fetch(API_URL,{
-
-        method:"POST",
-
-        body:JSON.stringify({
-
-          action:"deletePayment",
-
-          id:id
-
-        })
-
-      });
-
-
-    const result =
-      await response.json();
-
-
-    if(!result.success){
-
-      throw new Error(
-        result.message ||
-        "Unable to delete payment."
-      );
-
-    }
-
-
-    await loadData();
-
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "Unable to delete payment."
-    );
-
-
-  }finally{
-
-    hideLoader();
-
-  }
-
-}
-
-
-/* =========================================================
+/* =========================
    CALCULATE BALANCES
-========================================================= */
+========================= */
 
 function calculateBalances(){
 
-  const balances = {};
+const totals = {};
+
+people.forEach(
+p => totals[p] = 0
+);
 
 
-  people.forEach(person => {
+/* EXPENSES */
 
-    balances[person] = 0;
+expenses.forEach(
+e => {
 
-  });
-
-
-  /*
-    Expense:
-    Every person owes equal share.
-    Person who paid gets full amount credit.
-  */
-
-  expenses.forEach(expense => {
-
-    const amount =
-      Number(expense.amount) || 0;
-
-    const share =
-      amount / people.length;
+const amount =
+Number(e.amount) || 0;
 
 
-    people.forEach(person => {
-
-      balances[person] -= share;
-
-    });
-
-
-    if(
-      Object.prototype.hasOwnProperty.call(
-        balances,
-        expense.paidBy
-      )
-    ){
-
-      balances[expense.paidBy] += amount;
-
-    }
-
-  });
+const names =
+Array.isArray(e.people)
+&& e.people.length
+? e.people
+: people;
 
 
-  /*
-    Payment:
-    From person has paid money.
-    To person receives money.
-  */
-
-  payments.forEach(payment => {
-
-    const amount =
-      Number(payment.amount) || 0;
+const payer =
+e.paidBy;
 
 
-    if(
-      Object.prototype.hasOwnProperty.call(
-        balances,
-        payment.from
-      )
-    ){
-
-      balances[payment.from] += amount;
-
-    }
+const share =
+amount / names.length;
 
 
-    if(
-      Object.prototype.hasOwnProperty.call(
-        balances,
-        payment.to
-      )
-    ){
+names.forEach(
+name => {
 
-      balances[payment.to] -= amount;
+if(!(name in totals))
+totals[name] = 0;
 
-    }
+totals[name] -= share;
 
-  });
+}
+);
 
 
-  return balances;
+if(!(payer in totals))
+totals[payer] = 0;
+
+
+totals[payer] += amount;
+
+}
+);
+
+
+/* PAYMENTS */
+
+payments.forEach(
+p => {
+
+const amount =
+Number(p.amount) || 0;
+
+
+if(p.from in totals)
+totals[p.from] += amount;
+
+
+if(p.to in totals)
+totals[p.to] -= amount;
+
+}
+);
+
+
+return totals;
 
 }
 
 
-/* =========================================================
-   RENDER SUMMARY
-========================================================= */
+/* =========================
+   RENDER
+========================= */
 
-function renderSummary(){
+function render(){
 
-  const totalExpenses =
-    expenses.reduce(
-      (sum,e) =>
-        sum + Number(e.amount || 0),
-      0
-    );
+const totals =
+calculateBalances();
 
 
-  const totalPayments =
-    payments.reduce(
-      (sum,p) =>
-        sum + Number(p.amount || 0),
-      0
-    );
+const totalExpense =
+expenses.reduce(
+(sum,e) =>
+sum + Number(e.amount || 0),
+0
+);
 
 
-  $("totalExpenses").textContent =
-    formatMoney(totalExpenses);
+const totalPayment =
+payments.reduce(
+(sum,p) =>
+sum + Number(p.amount || 0),
+0
+);
 
 
-  $("totalPayments").textContent =
-    formatMoney(totalPayments);
+$("totalAmount").textContent =
+money(totalExpense);
 
 
-  const balances =
-    calculateBalances();
+$("totalPayments").textContent =
+money(totalPayment);
 
 
-  const container =
-    $("balances");
+$("expenseCount").textContent =
+expenses.length;
 
 
-  container.innerHTML = "";
+$("paymentCount").textContent =
+payments.length;
 
 
-  people.forEach(person => {
+/* BALANCES */
 
-    const balance =
-      balances[person] || 0;
+$("balances").innerHTML =
+Object.entries(totals)
+.map(
+([name,value]) => `
 
+<div class="balance">
 
-    const row =
-      document.createElement("div");
+<span>
+${esc(name)}
+</span>
 
-    row.className =
-      "person-row";
+<strong
+class="${
+value >= 0
+? "positive"
+: "negative"
+}">
 
+${value >= 0 ? "+" : ""}
+${money(value)}
 
-    let balanceClass = "";
+</strong>
 
-    let message = "";
+</div>
 
-
-    if(balance > 0.01){
-
-      balanceClass =
-        "balance-positive";
-
-      message =
-        "should receive";
-
-    }else if(balance < -0.01){
-
-      balanceClass =
-        "balance-negative";
-
-      message =
-        "needs to pay";
-
-    }else{
-
-      message =
-        "settled";
-
-    }
+`
+).join("");
 
 
-    row.innerHTML = `
+renderSettlements(totals);
 
-      <div class="person-name">
-        ${escapeHtml(person)}
-      </div>
+renderExpenseHistory();
 
-      <div class="${balanceClass}">
-        ${formatMoney(Math.abs(balance))}
-        ${message}
-      </div>
-
-    `;
-
-
-    container.appendChild(row);
-
-  });
+renderPaymentHistory();
 
 }
 
 
-/* =========================================================
-   SETTLEMENT CALCULATION
-========================================================= */
-
-function calculateSettlements(){
-
-  const balances =
-    calculateBalances();
-
-
-  const creditors = [];
-
-  const debtors = [];
-
-
-  Object.keys(balances).forEach(person => {
-
-    const amount =
-      Number(balances[person] || 0);
-
-
-    if(amount > 0.01){
-
-      creditors.push({
-
-        person:person,
-
-        amount:amount
-
-      });
-
-    }
-
-
-    if(amount < -0.01){
-
-      debtors.push({
-
-        person:person,
-
-        amount:Math.abs(amount)
-
-      });
-
-    }
-
-  });
-
-
-  creditors.sort(
-    (a,b) => b.amount - a.amount
-  );
-
-  debtors.sort(
-    (a,b) => b.amount - a.amount
-  );
-
-
-  const settlements = [];
-
-
-  let i = 0;
-
-  let j = 0;
-
-
-  while(
-    i < debtors.length &&
-    j < creditors.length
-  ){
-
-    const amount =
-      Math.min(
-        debtors[i].amount,
-        creditors[j].amount
-      );
-
-
-    if(amount > 0.01){
-
-      settlements.push({
-
-        from:
-          debtors[i].person,
-
-        to:
-          creditors[j].person,
-
-        amount:
-          amount
-
-      });
-
-    }
-
-
-    debtors[i].amount -= amount;
-
-    creditors[j].amount -= amount;
-
-
-    if(debtors[i].amount <= 0.01){
-
-      i++;
-
-    }
-
-
-    if(creditors[j].amount <= 0.01){
-
-      j++;
-
-    }
-
-  }
-
-
-  return settlements;
-
-}
-
-
-/* =========================================================
-   RENDER SETTLEMENT
-========================================================= */
-
-function renderSettlements(){
-
-  const container =
-    $("settlementList");
-
-
-  const settlements =
-    calculateSettlements();
-
-
-  if(!settlements.length){
-
-    container.innerHTML =
-      '<div class="small">No settlement required 🎉</div>';
-
-    return;
-
-  }
-
-
-  container.innerHTML = "";
-
-
-  settlements.forEach(settlement => {
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "settlement-row";
-
-
-    row.innerHTML = `
-
-      <div>
-
-        <strong>
-          ${escapeHtml(settlement.from)}
-        </strong>
-
-        <span class="settlement-arrow">
-          →
-        </span>
-
-        <strong>
-          ${escapeHtml(settlement.to)}
-        </strong>
-
-      </div>
-
-      <div class="amount">
-        ${formatMoney(settlement.amount)}
-      </div>
-
-    `;
-
-
-    row.onclick = function(){
-
-      useSettlement(
-        settlement.from,
-        settlement.to,
-        settlement.amount
-      );
-
-    };
-
-
-    container.appendChild(row);
-
-  });
-
-}
-
-
-/* =========================================================
-   USE SETTLEMENT
-========================================================= */
-
-function useSettlement(
-  from,
-  to,
-  amount
+/* =========================
+   SETTLEMENT
+========================= */
+
+function renderSettlements(
+totals
 ){
 
-  openTab("paymentTab");
+const creditors = [];
+
+const debtors = [];
 
 
-  $("paymentFrom").value =
-    from;
+Object.entries(totals)
+.forEach(
+([name,balance]) => {
+
+if(balance > 0.01){
+
+creditors.push({
+name,
+amount:balance
+});
+
+}
+else if(balance < -0.01){
+
+debtors.push({
+name,
+amount:-balance
+});
+
+}
+
+});
 
 
-  $("paymentTo").value =
-    to;
+const result = [];
+
+let i = 0;
+
+let j = 0;
 
 
-  $("paymentAmount").value =
-    Number(amount).toFixed(2);
+while(
+i < debtors.length &&
+j < creditors.length
+){
+
+const debtor =
+debtors[i];
+
+const creditor =
+creditors[j];
 
 
-  $("paymentDate").value =
-    today();
+const amount =
+Math.min(
+debtor.amount,
+creditor.amount
+);
 
 
-  showStatus(
-    "paymentStatus",
-    "Settlement details filled. Click Record Payment.",
-    "success"
-  );
+if(amount > 0){
 
+result.push({
 
-  document
-    .getElementById("paymentTab")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+from:debtor.name,
+
+to:creditor.name,
+
+amount
+
+});
 
 }
 
 
-/* =========================================================
-   RENDER EXPENSE HISTORY
-========================================================= */
+debtor.amount -= amount;
+
+creditor.amount -= amount;
+
+
+if(debtor.amount < 0.01)
+i++;
+
+
+if(creditor.amount < 0.01)
+j++;
+
+}
+
+
+if(!result.length){
+
+$("settlements").innerHTML = `
+
+<div class="empty">
+
+All expenses are settled 🎉
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+$("settlements").innerHTML =
+result.map(
+s => `
+
+<div
+class="settlement"
+onclick="useSettlement(
+'${esc(s.from)}',
+'${esc(s.to)}',
+${s.amount}
+)">
+
+<div>
+
+<div class="settlement-main">
+
+${esc(s.from)}
+→
+${esc(s.to)}
+
+</div>
+
+<div class="settlement-sub">
+
+${esc(s.from)}
+should send
+${money(s.amount)}
+
+</div>
+
+</div>
+
+<div>
+
+<strong class="negative">
+
+${money(s.amount)}
+
+</strong>
+
+<div class="settlement-action">
+
+Tap to record
+
+</div>
+
+</div>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* =========================
+   USE SETTLEMENT
+========================= */
+
+function useSettlement(
+from,
+to,
+amount
+){
+
+openTab("paymentTab");
+
+
+const fromIndex =
+people.indexOf(from);
+
+const toIndex =
+people.indexOf(to);
+
+
+if(fromIndex >= 0){
+
+$("paymentFrom").value =
+String(fromIndex);
+
+}
+
+
+if(toIndex >= 0){
+
+$("paymentTo").value =
+String(toIndex);
+
+}
+
+
+$("paymentAmount").value =
+Number(amount).toFixed(2);
+
+
+window.scrollTo({
+
+top:
+document
+.getElementById("paymentTab")
+.closest(".card")
+.offsetTop - 15,
+
+behavior:"smooth"
+
+});
+
+
+setStatus(
+`Payment ready: ${from} → ${to} ${money(amount)}`
+);
+
+}
+
+
+/* =========================
+   EXPENSE HISTORY
+========================= */
 
 function renderExpenseHistory(){
 
-  const container =
-    $("expenseHistory");
+if(!expenses.length){
 
+$("expenseRows").innerHTML = `
 
-  if(!expenses.length){
+<tr>
 
-    container.innerHTML =
-      '<div class="small">No expenses found.</div>';
+<td
+colspan="5"
+class="empty">
 
-    return;
+No expenses yet.
 
-  }
+</td>
 
+</tr>
 
-  container.innerHTML = "";
+`;
 
-
-  const sorted =
-    [...expenses].reverse();
-
-
-  sorted.forEach(expense => {
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "history-row";
-
-
-    row.innerHTML = `
-
-      <div class="history-header">
-
-        <div>
-
-          <strong>
-            ${escapeHtml(expense.description)}
-          </strong>
-
-          <div class="small">
-
-            ${escapeHtml(expense.date || "")}
-
-            • Paid by
-            ${escapeHtml(expense.paidBy || "")}
-
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="amount">
-            ${formatMoney(expense.amount)}
-          </div>
-
-          <button
-            class="delete-btn"
-            onclick="deleteExpense('${escapeHtml(expense.id)}')">
-            Delete
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-
-    container.appendChild(row);
-
-  });
+return;
 
 }
 
 
-/* =========================================================
-   RENDER PAYMENT HISTORY
-========================================================= */
+$("expenseRows").innerHTML =
+[...expenses]
+.reverse()
+.map(
+e => `
+
+<tr>
+
+<td>${esc(e.date)}</td>
+
+<td>${esc(e.description)}</td>
+
+<td>${esc(e.paidBy)}</td>
+
+<td>${money(e.amount)}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteExpense('${esc(e.id)}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`
+).join("");
+
+}
+
+
+/* =========================
+   PAYMENT HISTORY
+========================= */
 
 function renderPaymentHistory(){
 
-  const container =
-    $("paymentHistory");
+if(!payments.length){
 
+$("paymentRows").innerHTML = `
 
-  if(!payments.length){
+<tr>
 
-    container.innerHTML =
-      '<div class="small">No payments found.</div>';
+<td
+colspan="5"
+class="empty">
 
-    return;
+No payments recorded.
 
-  }
+</td>
 
+</tr>
 
-  container.innerHTML = "";
+`;
 
-
-  const sorted =
-    [...payments].reverse();
-
-
-  sorted.forEach(payment => {
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "history-row";
-
-
-    row.innerHTML = `
-
-      <div class="history-header">
-
-        <div>
-
-          <strong>
-
-            ${escapeHtml(payment.from)}
-
-            →
-            ${escapeHtml(payment.to)}
-
-          </strong>
-
-
-          <div class="small">
-
-            ${escapeHtml(payment.date || "")}
-
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="amount">
-
-            ${formatMoney(payment.amount)}
-
-          </div>
-
-
-          <button
-            class="delete-btn"
-            onclick="deletePayment('${escapeHtml(payment.id)}')">
-            Delete
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-
-    container.appendChild(row);
-
-  });
+return;
 
 }
 
 
-/* =========================================================
-   RENDER ALL
-========================================================= */
+$("paymentRows").innerHTML =
+[...payments]
+.reverse()
+.map(
+p => `
 
-function renderAll(){
+<tr>
 
-  renderSummary();
+<td>${esc(p.date)}</td>
 
-  renderSettlements();
+<td>${esc(p.from)}</td>
 
-  renderExpenseHistory();
+<td>${esc(p.to)}</td>
 
-  renderPaymentHistory();
+<td>${money(p.amount)}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deletePayment('${esc(p.id)}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`
+).join("");
+
+}
+
+
+/* =========================
+   API
+========================= */
+
+async function api(
+action,
+payload={}
+){
+
+if(!API_URL){
+
+throw new Error(
+"Apps Script URL is missing."
+);
 
 }
 
 
-/* =========================================================
-   MONEY FORMAT
-========================================================= */
+const response =
+await fetch(
+API_URL,
+{
+method:"POST",
 
-function formatMoney(value){
+headers:{
+"Content-Type":
+"text/plain;charset=utf-8"
+},
 
-  return "₹" +
-    Number(value || 0).toLocaleString(
-      "en-IN",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
+body:JSON.stringify({
+action,
+...payload
+})
+
+}
+);
+
+
+if(!response.ok){
+
+throw new Error(
+`Server returned ${response.status}`
+);
 
 }
 
 
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
+const data =
+await response.json();
 
-function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+if(!data.ok){
+
+throw new Error(
+data.error ||
+"Google Sheets request failed."
+);
 
 }
+
+
+return data;
+
+}
+
+
+/* =========================
+   LOAD DATA
+========================= */
+
+async function loadData(){
+
+try{
+
+$("refreshBtn").disabled = true;
+
+showLoader(
+"Loading trip data..."
+);
+
+setStatus(
+"Loading from Google Sheets..."
+);
+
+
+const data =
+await api("list");
+
+
+expenses =
+data.expenses || [];
+
+
+payments =
+data.payments || [];
+
+
+if(
+data.people &&
+data.people.length === 5
+){
+
+people =
+data.people;
+
+}
+
+
+renderPaidBy();
+
+renderPaymentPeople();
+
+render();
+
+
+setStatus(
+`Synced · ${expenses.length} expenses · ${payments.length} payments`
+);
+
+}
+catch(error){
+
+console.error(error);
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("refreshBtn").disabled = false;
+
+hideLoader();
+
+}
+
+}
+
+
+/* =========================
+   ADD EXPENSE
+========================= */
+
+$("expenseForm")
+.addEventListener(
+"submit",
+async e => {
+
+e.preventDefault();
+
+
+const amount =
+Number(
+$("amount").value
+);
+
+
+if(
+!Number.isFinite(amount)
+|| amount <= 0
+){
+
+setStatus(
+"Enter a valid amount.",
+true
+);
+
+return;
+
+}
+
+
+const expense = {
+
+id:
+crypto.randomUUID
+? crypto.randomUUID()
+: String(Date.now()),
+
+date:
+$("date").value,
+
+description:
+$("description")
+.value
+.trim(),
+
+amount,
+
+paidBy:
+people[
+Number(
+$("paidBy").value
+)
+],
+
+people:
+[...people]
+
+};
+
+
+try{
+
+$("saveBtn").disabled = true;
+
+$("clearExpenseBtn").disabled = true;
+
+showLoader(
+"Saving expense..."
+);
+
+setStatus(
+"Saving expense..."
+);
+
+
+const data =
+await api(
+"add",
+{
+expense,
+people
+}
+);
+
+
+expenses =
+data.expenses
+|| [...expenses,expense];
+
+
+render();
+
+
+$("expenseForm").reset();
+
+
+setDefaultDates();
+
+renderPaidBy();
+
+
+setStatus(
+"Expense saved successfully."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("saveBtn").disabled = false;
+
+$("clearExpenseBtn").disabled = false;
+
+hideLoader();
+
+}
+
+});
+
+
+/* =========================
+   DELETE EXPENSE
+========================= */
+
+async function deleteExpense(id){
+
+if(
+!confirm(
+"Delete this expense?"
+)
+)
+return;
+
+
+try{
+
+showLoader(
+"Deleting expense..."
+);
+
+setStatus(
+"Deleting expense..."
+);
+
+
+const data =
+await api(
+"delete",
+{id}
+);
+
+
+expenses =
+data.expenses
+|| expenses.filter(
+e =>
+String(e.id)
+!== String(id)
+);
+
+
+render();
+
+
+setStatus(
+"Expense deleted."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+hideLoader();
+
+}
+
+}
+
+window.deleteExpense =
+deleteExpense;
+
+
+/* =========================
+   ADD PAYMENT
+========================= */
+
+$("paymentForm")
+.addEventListener(
+"submit",
+async e => {
+
+e.preventDefault();
+
+
+const from =
+people[
+Number(
+$("paymentFrom").value
+)
+];
+
+
+const to =
+people[
+Number(
+$("paymentTo").value
+)
+];
+
+
+const amount =
+Number(
+$("paymentAmount").value
+);
+
+
+if(from === to){
+
+setStatus(
+"From and To cannot be the same.",
+true
+);
+
+return;
+
+}
+
+
+if(
+!Number.isFinite(amount)
+|| amount <= 0
+){
+
+setStatus(
+"Enter a valid payment amount.",
+true
+);
+
+return;
+
+}
+
+
+const payment = {
+
+id:
+crypto.randomUUID
+? crypto.randomUUID()
+: String(Date.now()),
+
+date:
+$("paymentDate").value,
+
+from,
+
+to,
+
+amount
+
+};
+
+
+try{
+
+$("paymentBtn").disabled = true;
+
+showLoader(
+"Recording payment..."
+);
+
+setStatus(
+"Saving payment..."
+);
+
+
+const data =
+await api(
+"addPayment",
+{
+payment,
+people
+}
+);
+
+
+payments =
+data.payments
+|| [...payments,payment];
+
+
+render();
+
+
+$("paymentForm").reset();
+
+
+setDefaultDates();
+
+renderPaymentPeople();
+
+
+setStatus(
+"Payment recorded successfully."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("paymentBtn").disabled = false;
+
+hideLoader();
+
+}
+
+});
+
+
+/* =========================
+   DELETE PAYMENT
+========================= */
+
+async function deletePayment(id){
+
+if(
+!confirm(
+"Delete this payment?"
+)
+)
+return;
+
+
+try{
+
+showLoader(
+"Deleting payment..."
+);
+
+setStatus(
+"Deleting payment..."
+);
+
+
+const data =
+await api(
+"deletePayment",
+{id}
+);
+
+
+payments =
+data.payments
+|| payments.filter(
+p =>
+String(p.id)
+!== String(id)
+);
+
+
+render();
+
+
+setStatus(
+"Payment deleted."
+);
+
+}
+catch(error){
+
+console.error(error);
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+hideLoader();
+
+}
+
+}
+
+window.deletePayment =
+deletePayment;
+
+
+/* =========================
+   REFRESH
+========================= */
+
+$("refreshBtn")
+.addEventListener(
+"click",
+loadData
+);
+
+
+/* =========================
+   DATES
+========================= */
+
+function setDefaultDates(){
+
+const today =
+new Date()
+.toISOString()
+.slice(0,10);
+
+
+$("date").value =
+today;
+
+$("paymentDate").value =
+today;
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+setDefaultDates();
+
+renderPaidBy();
+
+renderPaymentPeople();
+
+render();
+
+loadData();
 
 </script>
 
