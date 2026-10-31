@@ -15,10 +15,11 @@
   --primary:#3758d6;
   --green:#16845b;
   --red:#c34444;
-  --orange:#d97706;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -68,7 +69,7 @@ h3{
 
 .grid{
   display:grid;
-  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  grid-template-columns:1fr;
   gap:18px;
   align-items:start;
 }
@@ -92,11 +93,14 @@ label{
   margin-bottom:6px;
 }
 
-input,select,button{
+input,
+select,
+button{
   font:inherit;
 }
 
-input,select{
+input,
+select{
   width:100%;
   padding:11px 12px;
   border:1px solid #d9deea;
@@ -106,7 +110,8 @@ input,select{
   outline:none;
 }
 
-input:focus,select:focus{
+input:focus,
+select:focus{
   border-color:var(--primary);
   box-shadow:0 0 0 3px #3758d61a;
 }
@@ -163,26 +168,51 @@ button:disabled{
   flex-wrap:wrap;
 }
 
-.people{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
-}
-
-.person input{
-  padding:9px 8px;
-  font-size:13px;
-}
-
 .hint{
   color:var(--muted);
   font-size:12px;
   margin:9px 0 0;
 }
 
+/* TABS */
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+  background:#fff;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:13px;
+}
+
+.tab-button{
+  flex:1;
+  background:transparent;
+  color:var(--muted);
+  padding:13px 12px;
+  border-radius:9px;
+  font-weight:750;
+}
+
+.tab-button.active{
+  background:var(--primary);
+  color:#fff;
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.active{
+  display:block;
+}
+
+/* SUMMARY */
+
 .summary{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:10px;
   margin-bottom:15px;
 }
@@ -228,6 +258,8 @@ button:disabled{
   font-weight:750;
 }
 
+/* SETTLEMENT */
+
 .settlement{
   display:flex;
   justify-content:space-between;
@@ -237,6 +269,13 @@ button:disabled{
   border:1px solid var(--line);
   border-radius:10px;
   margin-bottom:8px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.settlement:hover{
+  background:#f7f8ff;
+  border-color:#bfc8ef;
 }
 
 .settlement-main{
@@ -248,6 +287,14 @@ button:disabled{
   color:var(--muted);
 }
 
+.settlement-action{
+  color:var(--primary);
+  font-size:12px;
+  font-weight:700;
+}
+
+/* TABLE */
+
 .table-wrap{
   overflow-x:auto;
 }
@@ -258,7 +305,8 @@ table{
   min-width:600px;
 }
 
-th,td{
+th,
+td{
   text-align:left;
   padding:11px 9px;
   border-bottom:1px solid var(--line);
@@ -283,8 +331,8 @@ th:last-child{
 
 @media(max-width:780px){
 
-  .grid{
-    grid-template-columns:1fr;
+  .summary{
+    grid-template-columns:repeat(2,1fr);
   }
 
   header{
@@ -292,12 +340,35 @@ th:last-child{
     flex-direction:column;
   }
 
-  .people{
-    grid-template-columns:repeat(2,1fr);
-  }
-
   .row{
     grid-template-columns:1fr;
+  }
+
+  .tabs{
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+}
+
+@media(max-width:450px){
+
+  .wrap{
+    margin:18px auto;
+    padding:0 12px 30px;
+  }
+
+  .card{
+    padding:16px;
+  }
+
+  .summary{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .tab-button{
+    font-size:13px;
+    padding:11px 6px;
   }
 }
 </style>
@@ -310,11 +381,13 @@ th:last-child{
 <header>
 
 <div>
+
 <h1>Trip Expense Manager</h1>
 
 <p class="sub">
 Track expenses, payments and automatically calculate who owes whom.
 </p>
+
 </div>
 
 <div class="top-actions">
@@ -344,123 +417,11 @@ Not connected yet
 <div class="grid">
 
 
-<!-- MEMBERS -->
-
-<section class="card">
-
-<h2>1. Trip Members</h2>
-
-<div
-class="people"
-id="peopleFields">
-</div>
-
-<p class="hint">
-Enter the names of all five people.
-</p>
-
-</section>
-
-
-<!-- ADD EXPENSE -->
-
-<section class="card">
-
-<h2>2. Add Expense</h2>
-
-<form id="expenseForm">
-
-<div class="field">
-
-<label>Expense Description</label>
-
-<input
-id="description"
-required
-maxlength="100"
-placeholder="Hotel, fuel, dinner...">
-
-</div>
-
-
-<div class="row">
-
-<div class="field">
-
-<label>Amount (₹)</label>
-
-<input
-id="amount"
-type="number"
-min="0.01"
-step="0.01"
-required
-placeholder="5000">
-
-</div>
-
-
-<div class="field">
-
-<label>Date</label>
-
-<input
-id="date"
-type="date"
-required>
-
-</div>
-
-</div>
-
-
-<div class="field">
-
-<label>Paid By</label>
-
-<select
-id="paidBy"
-required>
-</select>
-
-</div>
-
-
-<div class="actions">
-
-<button
-class="primary"
-id="saveBtn"
-type="submit">
-
-Save Expense
-
-</button>
-
-<button
-class="secondary"
-type="reset">
-
-Clear
-
-</button>
-
-</div>
-
-<p class="hint">
-Expense is divided equally between all five people.
-</p>
-
-</form>
-
-</section>
-
-
 <!-- SUMMARY -->
 
 <section class="card">
 
-<h2>3. Trip Summary</h2>
+<h2>Trip Summary</h2>
 
 <div class="summary">
 
@@ -474,7 +435,6 @@ Expense is divided equally between all five people.
 
 </div>
 
-
 <div class="stat">
 
 <small>Total Payments</small>
@@ -485,11 +445,6 @@ Expense is divided equally between all five people.
 
 </div>
 
-</div>
-
-
-<div class="summary">
-
 <div class="stat">
 
 <small>Expenses</small>
@@ -499,7 +454,6 @@ Expense is divided equally between all five people.
 </strong>
 
 </div>
-
 
 <div class="stat">
 
@@ -521,7 +475,7 @@ class="balances"
 id="balances">
 
 <div class="empty">
-Add expenses to calculate balances.
+Loading...
 </div>
 
 </div>
@@ -534,17 +488,159 @@ Negative = needs to pay.
 </section>
 
 
-<!-- PAYMENT -->
+<!-- TABS -->
 
 <section class="card">
 
-<h2>4. Record Payment</h2>
+<div class="tabs">
 
-<form id="paymentForm">
+<button
+class="tab-button active"
+id="expenseTabBtn"
+type="button"
+onclick="openTab('expenseTab')">
+
+💰 Add Expense
+
+</button>
+
+
+<button
+class="tab-button"
+id="paymentTabBtn"
+type="button"
+onclick="openTab('paymentTab')">
+
+💸 Record Payment
+
+</button>
+
+</div>
+
+
+<!-- EXPENSE TAB -->
+
+<div
+id="expenseTab"
+class="tab-content active">
+
+<h2>Add Expense</h2>
+
+<form id="expenseForm">
+
 
 <div class="field">
 
-<label>Date</label>
+<label>
+Expense Description
+</label>
+
+<input
+id="description"
+required
+maxlength="100"
+placeholder="Hotel, fuel, dinner...">
+
+</div>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>
+Amount (₹)
+</label>
+
+<input
+id="amount"
+type="number"
+min="0.01"
+step="0.01"
+required
+placeholder="5000">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Date
+</label>
+
+<input
+id="date"
+type="date"
+required>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Paid By
+</label>
+
+<select
+id="paidBy"
+required>
+</select>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+id="saveBtn"
+type="submit">
+
+Save Expense
+
+</button>
+
+
+<button
+class="secondary"
+type="reset">
+
+Clear
+
+</button>
+
+</div>
+
+
+<p class="hint">
+Expense is divided equally between all five people.
+</p>
+
+</form>
+
+</div>
+
+
+<!-- PAYMENT TAB -->
+
+<div
+id="paymentTab"
+class="tab-content">
+
+<h2>Record Payment</h2>
+
+<form id="paymentForm">
+
+
+<div class="field">
+
+<label>
+Payment Date
+</label>
 
 <input
 id="paymentDate"
@@ -558,7 +654,9 @@ required>
 
 <div class="field">
 
-<label>From</label>
+<label>
+From
+</label>
 
 <select
 id="paymentFrom"
@@ -570,7 +668,9 @@ required>
 
 <div class="field">
 
-<label>To</label>
+<label>
+To
+</label>
 
 <select
 id="paymentTo"
@@ -584,7 +684,9 @@ required>
 
 <div class="field">
 
-<label>Payment Amount (₹)</label>
+<label>
+Payment Amount (₹)
+</label>
 
 <input
 id="paymentAmount"
@@ -606,11 +708,14 @@ Record Payment
 
 </button>
 
+
 <p class="hint">
 Example: Person 2 sends ₹1,000 to Person 1.
 </p>
 
 </form>
+
+</div>
 
 </section>
 
@@ -619,7 +724,7 @@ Example: Person 2 sends ₹1,000 to Person 1.
 
 <section class="card wide">
 
-<h2>5. Suggested Settlement</h2>
+<h2>Suggested Settlement</h2>
 
 <div id="settlements">
 
@@ -629,6 +734,10 @@ Add expenses to see who should pay whom.
 
 </div>
 
+<p class="hint">
+Tap a settlement to automatically fill the payment form.
+</p>
+
 </section>
 
 
@@ -636,7 +745,7 @@ Add expenses to see who should pay whom.
 
 <section class="card wide">
 
-<h2>6. Expense History</h2>
+<h2>Expense History</h2>
 
 <div class="table-wrap">
 
@@ -645,11 +754,13 @@ Add expenses to see who should pay whom.
 <thead>
 
 <tr>
+
 <th>Date</th>
 <th>Description</th>
 <th>Paid By</th>
 <th>Amount</th>
 <th>Action</th>
+
 </tr>
 
 </thead>
@@ -657,9 +768,15 @@ Add expenses to see who should pay whom.
 <tbody id="expenseRows">
 
 <tr>
-<td colspan="5" class="empty">
+
+<td
+colspan="5"
+class="empty">
+
 No expenses.
+
 </td>
+
 </tr>
 
 </tbody>
@@ -675,7 +792,7 @@ No expenses.
 
 <section class="card wide">
 
-<h2>7. Payment History</h2>
+<h2>Payment History</h2>
 
 <div class="table-wrap">
 
@@ -684,11 +801,13 @@ No expenses.
 <thead>
 
 <tr>
+
 <th>Date</th>
 <th>From</th>
 <th>To</th>
 <th>Amount</th>
 <th>Action</th>
+
 </tr>
 
 </thead>
@@ -696,9 +815,15 @@ No expenses.
 <tbody id="paymentRows">
 
 <tr>
-<td colspan="5" class="empty">
+
+<td
+colspan="5"
+class="empty">
+
 No payments.
+
 </td>
+
 </tr>
 
 </tbody>
@@ -745,7 +870,7 @@ let expenses = [];
 let payments = [];
 
 
-/* YOUR APPS SCRIPT URL */
+/* APPS SCRIPT URL */
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
@@ -798,61 +923,44 @@ isError
 }
 
 
-/* PEOPLE */
+/* TABS */
 
-function renderPeople(){
+function openTab(tabId){
 
-$("peopleFields").innerHTML =
-people.map(
-(name,i)=>`
+document
+.querySelectorAll(".tab-content")
+.forEach(tab => {
 
-<div class="person">
-
-<label>
-Member ${i+1}
-</label>
-
-<input
-id="person${i}"
-maxlength="40"
-value="${esc(name)}">
-
-</div>
-
-`
-).join("");
-
-
-people.forEach(
-(_,i)=>{
-
-$(`person${i}`)
-.addEventListener(
-"change",
-()=>{
-
-people[i] =
-$(`person${i}`)
-.value
-.trim()
-|| DEFAULT_NAMES[i];
-
-renderPeople();
-
-render();
-
-setStatus(
-`Member ${i+1} updated.`
-);
-
-}
-);
+tab.classList.remove("active");
 
 });
 
-renderPaidBy();
 
-renderPaymentPeople();
+document
+.querySelectorAll(".tab-button")
+.forEach(button => {
+
+button.classList.remove("active");
+
+});
+
+
+$(tabId)
+.classList.add("active");
+
+
+if(tabId === "expenseTab"){
+
+$("expenseTabBtn")
+.classList.add("active");
+
+}
+else{
+
+$("paymentTabBtn")
+.classList.add("active");
+
+}
 
 }
 
@@ -863,7 +971,7 @@ function renderPaidBy(){
 
 $("paidBy").innerHTML =
 people.map(
-(p,i)=>
+(p,i) =>
 `<option value="${i}">
 ${esc(p)}
 </option>`
@@ -876,7 +984,7 @@ function renderPaymentPeople(){
 
 $("paymentFrom").innerHTML =
 people.map(
-(p,i)=>
+(p,i) =>
 `<option value="${i}">
 ${esc(p)}
 </option>`
@@ -885,15 +993,18 @@ ${esc(p)}
 
 $("paymentTo").innerHTML =
 people.map(
-(p,i)=>
+(p,i) =>
 `<option value="${i}">
 ${esc(p)}
 </option>`
 ).join("");
 
 
-if(people.length > 1)
+if(people.length > 1){
+
 $("paymentTo").value = "1";
+
+}
 
 }
 
@@ -917,11 +1028,13 @@ e => {
 const amount =
 Number(e.amount) || 0;
 
+
 const names =
 Array.isArray(e.people)
 && e.people.length
 ? e.people
 : people;
+
 
 const payer =
 e.paidBy;
@@ -1096,6 +1209,7 @@ amount:-balance
 const result = [];
 
 let i = 0;
+
 let j = 0;
 
 
@@ -1137,6 +1251,7 @@ creditor.amount -= amount;
 if(debtor.amount < 0.01)
 i++;
 
+
 if(creditor.amount < 0.01)
 j++;
 
@@ -1162,9 +1277,15 @@ return;
 
 $("settlements").innerHTML =
 result.map(
-s=>`
+(s,index) => `
 
-<div class="settlement">
+<div
+class="settlement"
+onclick="useSettlement(
+'${esc(s.from)}',
+'${esc(s.to)}',
+${s.amount}
+)">
 
 <div>
 
@@ -1186,16 +1307,82 @@ ${money(s.amount)}
 
 </div>
 
+<div>
+
 <strong class="negative">
 
 ${money(s.amount)}
 
 </strong>
 
+<div class="settlement-action">
+
+Tap to record
+
+</div>
+
+</div>
+
 </div>
 
 `
 ).join("");
+
+}
+
+
+/* USE SETTLEMENT */
+
+function useSettlement(
+from,
+to,
+amount
+){
+
+openTab("paymentTab");
+
+
+const fromIndex =
+people.indexOf(from);
+
+const toIndex =
+people.indexOf(to);
+
+
+if(fromIndex >= 0){
+
+$("paymentFrom").value =
+String(fromIndex);
+
+}
+
+
+if(toIndex >= 0){
+
+$("paymentTo").value =
+String(toIndex);
+
+}
+
+
+$("paymentAmount").value =
+Number(amount).toFixed(2);
+
+
+window.scrollTo({
+top:
+document
+.getElementById("paymentTab")
+.closest(".card")
+.offsetTop - 15,
+
+behavior:"smooth"
+});
+
+
+setStatus(
+`Payment ready: ${from} → ${to} ${money(amount)}`
+);
 
 }
 
@@ -1231,7 +1418,7 @@ $("expenseRows").innerHTML =
 [...expenses]
 .reverse()
 .map(
-e=>`
+e => `
 
 <tr>
 
@@ -1294,7 +1481,7 @@ $("paymentRows").innerHTML =
 [...payments]
 .reverse()
 .map(
-p=>`
+p => `
 
 <tr>
 
@@ -1423,7 +1610,9 @@ data.people.length === 5
 people =
 data.people;
 
-renderPeople();
+renderPaidBy();
+
+renderPaymentPeople();
 
 }
 
@@ -1548,6 +1737,9 @@ $("date").value =
 new Date()
 .toISOString()
 .slice(0,10);
+
+
+renderPaidBy();
 
 
 setStatus(
@@ -1833,6 +2025,7 @@ new Date()
 .toISOString()
 .slice(0,10);
 
+
 $("paymentDate").value =
 new Date()
 .toISOString()
@@ -1841,7 +2034,9 @@ new Date()
 
 /* START */
 
-renderPeople();
+renderPaidBy();
+
+renderPaymentPeople();
 
 render();
 
