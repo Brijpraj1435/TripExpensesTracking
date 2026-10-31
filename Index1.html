@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Expense Manager</title>
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#fff;
+  --ink:#172033;
+  --muted:#697386;
+  --line:#e7eaf1;
+  --primary:#3758d6;
+  --green:#16845b;
+  --red:#c34444;
+  --orange:#d97706;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+.wrap{
+  max-width:1120px;
+  margin:32px auto;
+  padding:0 18px 40px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:22px;
+}
+
+h1{
+  margin:0;
+  font-size:clamp(25px,4vw,34px);
+}
+
+h2{
+  margin:0 0 15px;
+  font-size:18px;
+}
+
+h3{
+  margin:18px 0 10px;
+  font-size:15px;
+}
+
+.sub{
+  color:var(--muted);
+  margin:5px 0 0;
+}
+
+.status{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:18px;
+  align-items:start;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 5px 22px #18264a08;
+}
+
+.wide{
+  grid-column:1/-1;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:650;
+  margin-bottom:6px;
+}
+
+input,select,button{
+  font:inherit;
+}
+
+input,select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #d9deea;
+  border-radius:9px;
+  background:#fff;
+  color:var(--ink);
+  outline:none;
+}
+
+input:focus,select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px #3758d61a;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+
+.primary{
+  background:var(--primary);
+  color:#fff;
+}
+
+.secondary{
+  background:#eef1fb;
+  color:#2946b5;
+}
+
+.success{
+  background:#e9f8f1;
+  color:#08744c;
+}
+
+.danger{
+  background:#fff0f0;
+  color:var(--red);
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.actions,
+.top-actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+
+.people{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+
+.person input{
+  padding:9px 8px;
+  font-size:13px;
+}
+
+.hint{
+  color:var(--muted);
+  font-size:12px;
+  margin:9px 0 0;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.stat{
+  padding:13px;
+  border-radius:11px;
+  background:#f6f7fc;
+}
+
+.stat small{
+  color:var(--muted);
+  display:block;
+}
+
+.stat strong{
+  font-size:20px;
+  display:block;
+  margin-top:3px;
+}
+
+.balances{
+  display:grid;
+  gap:8px;
+}
+
+.balance{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+
+.positive{
+  color:var(--green);
+  font-weight:750;
+}
+
+.negative{
+  color:var(--red);
+  font-weight:750;
+}
+
+.settlement{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin-bottom:8px;
+}
+
+.settlement-main{
+  font-weight:700;
+}
+
+.settlement-sub{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+th,td{
+  text-align:left;
+  padding:11px 9px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+
+th{
+  color:var(--muted);
+  font-weight:700;
+}
+
+td:last-child,
+th:last-child{
+  text-align:right;
+}
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:24px 8px;
+}
+
+@media(max-width:780px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .people{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .row{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header>
+
+<div>
+<h1>Trip Expense Manager</h1>
+
+<p class="sub">
+Track expenses, payments and automatically calculate who owes whom.
+</p>
+</div>
+
+<div class="top-actions">
+
+<button
+class="secondary"
+id="refreshBtn"
+type="button">
+
+↻ Refresh
+
+</button>
+
+<span
+class="status"
+id="status">
+
+Not connected yet
+
+</span>
+
+</div>
+
+</header>
+
+
+<div class="grid">
+
+
+<!-- MEMBERS -->
+
+<section class="card">
+
+<h2>1. Trip Members</h2>
+
+<div
+class="people"
+id="peopleFields">
+</div>
+
+<p class="hint">
+Enter the names of all five people.
+</p>
+
+</section>
+
+
+<!-- ADD EXPENSE -->
+
+<section class="card">
+
+<h2>2. Add Expense</h2>
+
+<form id="expenseForm">
+
+<div class="field">
+
+<label>Expense Description</label>
+
+<input
+id="description"
+required
+maxlength="100"
+placeholder="Hotel, fuel, dinner...">
+
+</div>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>Amount (₹)</label>
+
+<input
+id="amount"
+type="number"
+min="0.01"
+step="0.01"
+required
+placeholder="5000">
+
+</div>
+
+
+<div class="field">
+
+<label>Date</label>
+
+<input
+id="date"
+type="date"
+required>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>Paid By</label>
+
+<select
+id="paidBy"
+required>
+</select>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="primary"
+id="saveBtn"
+type="submit">
+
+Save Expense
+
+</button>
+
+<button
+class="secondary"
+type="reset">
+
+Clear
+
+</button>
+
+</div>
+
+<p class="hint">
+Expense is divided equally between all five people.
+</p>
+
+</form>
+
+</section>
+
+
+<!-- SUMMARY -->
+
+<section class="card">
+
+<h2>3. Trip Summary</h2>
+
+<div class="summary">
+
+<div class="stat">
+
+<small>Total Expenses</small>
+
+<strong id="totalAmount">
+₹0.00
+</strong>
+
+</div>
+
+
+<div class="stat">
+
+<small>Total Payments</small>
+
+<strong id="totalPayments">
+₹0.00
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="summary">
+
+<div class="stat">
+
+<small>Expenses</small>
+
+<strong id="expenseCount">
+0
+</strong>
+
+</div>
+
+
+<div class="stat">
+
+<small>Payments</small>
+
+<strong id="paymentCount">
+0
+</strong>
+
+</div>
+
+</div>
+
+
+<h3>Current Balance</h3>
+
+<div
+class="balances"
+id="balances">
+
+<div class="empty">
+Add expenses to calculate balances.
+</div>
+
+</div>
+
+<p class="hint">
+Positive = should receive money.
+Negative = needs to pay.
+</p>
+
+</section>
+
+
+<!-- PAYMENT -->
+
+<section class="card">
+
+<h2>4. Record Payment</h2>
+
+<form id="paymentForm">
+
+<div class="field">
+
+<label>Date</label>
+
+<input
+id="paymentDate"
+type="date"
+required>
+
+</div>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>From</label>
+
+<select
+id="paymentFrom"
+required>
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>To</label>
+
+<select
+id="paymentTo"
+required>
+</select>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>Payment Amount (₹)</label>
+
+<input
+id="paymentAmount"
+type="number"
+min="0.01"
+step="0.01"
+required
+placeholder="1000">
+
+</div>
+
+
+<button
+class="success"
+id="paymentBtn"
+type="submit">
+
+Record Payment
+
+</button>
+
+<p class="hint">
+Example: Person 2 sends ₹1,000 to Person 1.
+</p>
+
+</form>
+
+</section>
+
+
+<!-- SETTLEMENT -->
+
+<section class="card wide">
+
+<h2>5. Suggested Settlement</h2>
+
+<div id="settlements">
+
+<div class="empty">
+Add expenses to see who should pay whom.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- EXPENSE HISTORY -->
+
+<section class="card wide">
+
+<h2>6. Expense History</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Paid By</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="expenseRows">
+
+<tr>
+<td colspan="5" class="empty">
+No expenses.
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- PAYMENT HISTORY -->
+
+<section class="card wide">
+
+<h2>7. Payment History</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>From</th>
+<th>To</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="paymentRows">
+
+<tr>
+<td colspan="5" class="empty">
+No payments.
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</div>
+
+
+<footer
+style="text-align:center;padding:20px;color:#697386;font-size:13px">
+
+<div>
+Developed by <strong>Brijesh Prajapati</strong>
+</div>
+
+<div>
+© 2026 Brijesh Prajapati. All Rights Reserved.
+</div>
+
+</footer>
+
+</div>
+
+
+<script>
+
+const DEFAULT_NAMES = [
+"Person 1",
+"Person 2",
+"Person 3",
+"Person 4",
+"Person 5"
+];
+
+let people = [...DEFAULT_NAMES];
+
+let expenses = [];
+
+let payments = [];
+
+
+/* YOUR APPS SCRIPT URL */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
+
+
+const $ = id =>
+document.getElementById(id);
+
+
+const money = n =>
+"₹" +
+Number(n || 0).toLocaleString(
+"en-IN",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+
+const esc = s =>
+String(s ?? "").replace(
+/[&<>"']/g,
+c =>
+({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+);
+
+
+/* STATUS */
+
+function setStatus(
+message,
+isError=false
+){
+
+$("status").textContent =
+message;
+
+$("status").style.color =
+isError
+? "#c34444"
+: "#697386";
+
+}
+
+
+/* PEOPLE */
+
+function renderPeople(){
+
+$("peopleFields").innerHTML =
+people.map(
+(name,i)=>`
+
+<div class="person">
+
+<label>
+Member ${i+1}
+</label>
+
+<input
+id="person${i}"
+maxlength="40"
+value="${esc(name)}">
+
+</div>
+
+`
+).join("");
+
+
+people.forEach(
+(_,i)=>{
+
+$(`person${i}`)
+.addEventListener(
+"change",
+()=>{
+
+people[i] =
+$(`person${i}`)
+.value
+.trim()
+|| DEFAULT_NAMES[i];
+
+renderPeople();
+
+render();
+
+setStatus(
+`Member ${i+1} updated.`
+);
+
+}
+);
+
+});
+
+renderPaidBy();
+
+renderPaymentPeople();
+
+}
+
+
+/* DROPDOWNS */
+
+function renderPaidBy(){
+
+$("paidBy").innerHTML =
+people.map(
+(p,i)=>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
+
+}
+
+
+function renderPaymentPeople(){
+
+$("paymentFrom").innerHTML =
+people.map(
+(p,i)=>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
+
+
+$("paymentTo").innerHTML =
+people.map(
+(p,i)=>
+`<option value="${i}">
+${esc(p)}
+</option>`
+).join("");
+
+
+if(people.length > 1)
+$("paymentTo").value = "1";
+
+}
+
+
+/* CALCULATE BALANCES */
+
+function calculateBalances(){
+
+const totals = {};
+
+people.forEach(
+p => totals[p] = 0
+);
+
+
+/* EXPENSES */
+
+expenses.forEach(
+e => {
+
+const amount =
+Number(e.amount) || 0;
+
+const names =
+Array.isArray(e.people)
+&& e.people.length
+? e.people
+: people;
+
+const payer =
+e.paidBy;
+
+
+const share =
+amount / names.length;
+
+
+names.forEach(
+name => {
+
+if(!(name in totals))
+totals[name] = 0;
+
+totals[name] -= share;
+
+}
+);
+
+
+if(!(payer in totals))
+totals[payer] = 0;
+
+
+totals[payer] += amount;
+
+}
+);
+
+
+/* PAYMENTS */
+
+payments.forEach(
+p => {
+
+const amount =
+Number(p.amount) || 0;
+
+
+if(p.from in totals)
+totals[p.from] += amount;
+
+
+if(p.to in totals)
+totals[p.to] -= amount;
+
+}
+);
+
+
+return totals;
+
+}
+
+
+/* RENDER */
+
+function render(){
+
+const totals =
+calculateBalances();
+
+
+const totalExpense =
+expenses.reduce(
+(sum,e) =>
+sum + Number(e.amount || 0),
+0
+);
+
+
+const totalPayment =
+payments.reduce(
+(sum,p) =>
+sum + Number(p.amount || 0),
+0
+);
+
+
+$("totalAmount").textContent =
+money(totalExpense);
+
+
+$("totalPayments").textContent =
+money(totalPayment);
+
+
+$("expenseCount").textContent =
+expenses.length;
+
+
+$("paymentCount").textContent =
+payments.length;
+
+
+/* BALANCES */
+
+$("balances").innerHTML =
+Object.entries(totals)
+.map(
+([name,value]) => `
+
+<div class="balance">
+
+<span>
+${esc(name)}
+</span>
+
+<strong
+class="${
+value >= 0
+? "positive"
+: "negative"
+}">
+
+${value >= 0 ? "+" : ""}
+${money(value)}
+
+</strong>
+
+</div>
+
+`
+).join("");
+
+
+renderSettlements(totals);
+
+renderExpenseHistory();
+
+renderPaymentHistory();
+
+}
+
+
+/* SETTLEMENT */
+
+function renderSettlements(
+totals
+){
+
+const creditors = [];
+
+const debtors = [];
+
+
+Object.entries(totals)
+.forEach(
+([name,balance]) => {
+
+if(balance > 0.01){
+
+creditors.push({
+name,
+amount:balance
+});
+
+}
+else if(balance < -0.01){
+
+debtors.push({
+name,
+amount:-balance
+});
+
+}
+
+});
+
+
+const result = [];
+
+let i = 0;
+let j = 0;
+
+
+while(
+i < debtors.length &&
+j < creditors.length
+){
+
+const debtor =
+debtors[i];
+
+const creditor =
+creditors[j];
+
+
+const amount =
+Math.min(
+debtor.amount,
+creditor.amount
+);
+
+
+result.push({
+
+from:debtor.name,
+
+to:creditor.name,
+
+amount
+
+});
+
+
+debtor.amount -= amount;
+
+creditor.amount -= amount;
+
+
+if(debtor.amount < 0.01)
+i++;
+
+if(creditor.amount < 0.01)
+j++;
+
+}
+
+
+if(!result.length){
+
+$("settlements").innerHTML = `
+
+<div class="empty">
+
+All expenses are settled 🎉
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+$("settlements").innerHTML =
+result.map(
+s=>`
+
+<div class="settlement">
+
+<div>
+
+<div class="settlement-main">
+
+${esc(s.from)}
+→
+${esc(s.to)}
+
+</div>
+
+<div class="settlement-sub">
+
+${esc(s.from)}
+should send
+${money(s.amount)}
+
+</div>
+
+</div>
+
+<strong class="negative">
+
+${money(s.amount)}
+
+</strong>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* EXPENSE HISTORY */
+
+function renderExpenseHistory(){
+
+if(!expenses.length){
+
+$("expenseRows").innerHTML = `
+
+<tr>
+
+<td
+colspan="5"
+class="empty">
+
+No expenses yet.
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+
+$("expenseRows").innerHTML =
+[...expenses]
+.reverse()
+.map(
+e=>`
+
+<tr>
+
+<td>${esc(e.date)}</td>
+
+<td>${esc(e.description)}</td>
+
+<td>${esc(e.paidBy)}</td>
+
+<td>${money(e.amount)}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteExpense('${esc(e.id)}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`
+).join("");
+
+}
+
+
+/* PAYMENT HISTORY */
+
+function renderPaymentHistory(){
+
+if(!payments.length){
+
+$("paymentRows").innerHTML = `
+
+<tr>
+
+<td
+colspan="5"
+class="empty">
+
+No payments recorded.
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+
+$("paymentRows").innerHTML =
+[...payments]
+.reverse()
+.map(
+p=>`
+
+<tr>
+
+<td>${esc(p.date)}</td>
+
+<td>${esc(p.from)}</td>
+
+<td>${esc(p.to)}</td>
+
+<td>${money(p.amount)}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deletePayment('${esc(p.id)}')">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`
+).join("");
+
+}
+
+
+/* API */
+
+async function api(
+action,
+payload={}
+){
+
+if(!API_URL){
+
+throw new Error(
+"Apps Script URL is missing."
+);
+
+}
+
+
+const response =
+await fetch(
+API_URL,
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"text/plain;charset=utf-8"
+},
+
+body:JSON.stringify({
+action,
+...payload
+})
+
+}
+);
+
+
+if(!response.ok){
+
+throw new Error(
+`Server returned ${response.status}`
+);
+
+}
+
+
+const data =
+await response.json();
+
+
+if(!data.ok){
+
+throw new Error(
+data.error ||
+"Google Sheets request failed."
+);
+
+}
+
+
+return data;
+
+}
+
+
+/* LOAD */
+
+async function loadData(){
+
+try{
+
+$("refreshBtn").disabled = true;
+
+setStatus(
+"Loading from Google Sheets..."
+);
+
+
+const data =
+await api("list");
+
+
+expenses =
+data.expenses || [];
+
+
+payments =
+data.payments || [];
+
+
+if(
+data.people &&
+data.people.length === 5
+){
+
+people =
+data.people;
+
+renderPeople();
+
+}
+
+
+render();
+
+
+setStatus(
+`Synced · ${expenses.length} expenses · ${payments.length} payments`
+);
+
+}
+catch(error){
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("refreshBtn").disabled = false;
+
+}
+
+}
+
+
+/* ADD EXPENSE */
+
+$("expenseForm")
+.addEventListener(
+"submit",
+async e => {
+
+e.preventDefault();
+
+
+const amount =
+Number(
+$("amount").value
+);
+
+
+if(
+!Number.isFinite(amount)
+|| amount <= 0
+){
+
+setStatus(
+"Enter a valid amount.",
+true
+);
+
+return;
+
+}
+
+
+const expense = {
+
+id:
+crypto.randomUUID
+? crypto.randomUUID()
+: String(Date.now()),
+
+date:
+$("date").value,
+
+description:
+$("description")
+.value
+.trim(),
+
+amount,
+
+paidBy:
+people[
+Number(
+$("paidBy").value
+)
+],
+
+people:
+[...people]
+
+};
+
+
+try{
+
+$("saveBtn").disabled = true;
+
+setStatus(
+"Saving expense..."
+);
+
+
+const data =
+await api(
+"add",
+{
+expense,
+people
+}
+);
+
+
+expenses =
+data.expenses
+|| [...expenses,expense];
+
+
+render();
+
+
+$("expenseForm").reset();
+
+
+$("date").value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+
+setStatus(
+"Expense saved successfully."
+);
+
+}
+catch(error){
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("saveBtn").disabled = false;
+
+}
+
+});
+
+
+/* DELETE EXPENSE */
+
+async function deleteExpense(id){
+
+if(
+!confirm(
+"Delete this expense?"
+)
+)
+return;
+
+
+try{
+
+const data =
+await api(
+"delete",
+{id}
+);
+
+
+expenses =
+data.expenses
+|| expenses.filter(
+e =>
+String(e.id)
+!== String(id)
+);
+
+
+render();
+
+
+setStatus(
+"Expense deleted."
+);
+
+}
+catch(error){
+
+setStatus(
+error.message,
+true
+);
+
+}
+
+}
+
+window.deleteExpense =
+deleteExpense;
+
+
+/* ADD PAYMENT */
+
+$("paymentForm")
+.addEventListener(
+"submit",
+async e => {
+
+e.preventDefault();
+
+
+const from =
+people[
+Number(
+$("paymentFrom").value
+)
+];
+
+
+const to =
+people[
+Number(
+$("paymentTo").value
+)
+];
+
+
+const amount =
+Number(
+$("paymentAmount").value
+);
+
+
+if(from === to){
+
+setStatus(
+"From and To cannot be the same.",
+true
+);
+
+return;
+
+}
+
+
+if(
+!Number.isFinite(amount)
+|| amount <= 0
+){
+
+setStatus(
+"Enter a valid payment amount.",
+true
+);
+
+return;
+
+}
+
+
+const payment = {
+
+id:
+crypto.randomUUID
+? crypto.randomUUID()
+: String(Date.now()),
+
+date:
+$("paymentDate").value,
+
+from,
+
+to,
+
+amount
+
+};
+
+
+try{
+
+$("paymentBtn").disabled = true;
+
+setStatus(
+"Saving payment..."
+);
+
+
+const data =
+await api(
+"addPayment",
+{
+payment,
+people
+}
+);
+
+
+payments =
+data.payments
+|| [...payments,payment];
+
+
+render();
+
+
+$("paymentForm").reset();
+
+
+$("paymentDate").value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+
+renderPaymentPeople();
+
+
+setStatus(
+"Payment recorded successfully."
+);
+
+}
+catch(error){
+
+setStatus(
+error.message,
+true
+);
+
+}
+finally{
+
+$("paymentBtn").disabled = false;
+
+}
+
+});
+
+
+/* DELETE PAYMENT */
+
+async function deletePayment(id){
+
+if(
+!confirm(
+"Delete this payment?"
+)
+)
+return;
+
+
+try{
+
+const data =
+await api(
+"deletePayment",
+{id}
+);
+
+
+payments =
+data.payments
+|| payments.filter(
+p =>
+String(p.id)
+!== String(id)
+);
+
+
+render();
+
+
+setStatus(
+"Payment deleted."
+);
+
+}
+catch(error){
+
+setStatus(
+error.message,
+true
+);
+
+}
+
+}
+
+window.deletePayment =
+deletePayment;
+
+
+/* REFRESH */
+
+$("refreshBtn")
+.addEventListener(
+"click",
+loadData
+);
+
+
+/* DATES */
+
+$("date").value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+$("paymentDate").value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+
+/* START */
+
+renderPeople();
+
+render();
+
+loadData();
+
+</script>
+
+</body>
+</html>
