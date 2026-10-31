@@ -96,16 +96,6 @@
       <div class="balances" id="balances"><div class="empty">Add expenses to calculate balances.</div></div>
       <p class="hint">Positive means the member should receive money; negative means they need to pay.</p>
     </section>
-
-    <section class="card">
-      <h2>4. Google Sheets connection</h2>
-      <div class="field"><label for="apiUrl">Apps Script Web App URL</label><input id="apiUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /></div>
-      <div class="actions">
-        <button class="secondary" id="connectBtn" type="button">Connect & load data</button>
-      </div>
-      <p class="hint">Paste the deployed Apps Script Web App URL. It is kept in this browser only.</p>
-    </section>
-
     <section class="card wide">
       <h2>5. Expense history</h2>
       <div class="table-wrap">
@@ -122,8 +112,8 @@
   const DEFAULT_NAMES = ["Person 1", "Person 2", "Person 3", "Person 4", "Person 5"];
   let people = [...DEFAULT_NAMES];
   let expenses = [];
-  let apiUrl = localStorage.getItem("tripExpenseApiUrl") || "";
-
+  let apiUrl =  localStorage.getItem("tripExpenseApiUrl") || "";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyY08hSSzmnsbYQqWMu72w-LniYOxdvB2IlgF-cuo5c5XAr6HeHsA28gDGiiH9iVtmKEA/exec";
   const $ = id => document.getElementById(id);
   const money = n => "₹" + Number(n || 0).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -178,7 +168,7 @@
     }).join("") : '<tr><td colspan="5" class="empty">No expenses yet. Add your first expense above.</td></tr>';
   }
   async function api(action, payload={}) {
-    const url = $("apiUrl").value.trim();
+    const url = API_URL;
     if (!url) throw new Error("Add your Apps Script Web App URL first.");
     const response = await fetch(url, {
       method:"POST",
@@ -192,14 +182,14 @@
   }
   async function loadExpenses() {
     try {
-      $("refreshBtn").disabled = true; $("connectBtn").disabled = true;
+      $("refreshBtn").disabled = true; 
       setStatus("Loading from Google Sheets…");
       const data = await api("list");
       expenses = data.expenses || [];
       if (data.people && data.people.length === 5) { people = data.people; renderPeople(); }
       render(); setStatus(`Synced · ${expenses.length} expense(s) loaded`);
     } catch (err) { setStatus(err.message, true); }
-    finally { $("refreshBtn").disabled = false; $("connectBtn").disabled = false; }
+    finally { $("refreshBtn").disabled = false; }
   }
   async function deleteExpense(id) {
     if (!confirm("Delete this expense from the Google Sheet?")) return;
@@ -233,14 +223,13 @@
     } catch(err) { setStatus(err.message, true); }
     finally { $("saveBtn").disabled = false; }
   });
-  $("connectBtn").addEventListener("click", () => {
-    apiUrl = $("apiUrl").value.trim(); localStorage.setItem("tripExpenseApiUrl", apiUrl); loadExpenses();
-  });
+  
   $("refreshBtn").addEventListener("click", loadExpenses);
   $("apiUrl").value = apiUrl;
   $("date").value = new Date().toISOString().slice(0,10);
   renderPeople(); render();
-  if (apiUrl) loadExpenses();
+  
+loadExpenses();
 </script>
 </body>
 </html>
